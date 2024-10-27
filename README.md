@@ -15,7 +15,7 @@ This project is a social media website currently under development. It serves as
 ## Planned Features
 
 - User registration and authentication (kinda implemented using breeze)
-- User profiles (not implemented yet)
+- User profiles (kinda implemented using breeze)
 - Groups (not implemented yet)
 - Posting, reacting and commenting on content (not implemented yet)
 - more..
