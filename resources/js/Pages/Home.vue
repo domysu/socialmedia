@@ -26,7 +26,7 @@ defineProps({
             <CreatePost></CreatePost>
             <PostList></PostList>
         </div>
-        <div class="col-span-3 /py-6">
+        <div class="col-span-3 py-9 flex justify-start ml-5">
         <FollowerList></FollowerList>
         </div>
     </div>

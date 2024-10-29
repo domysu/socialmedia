@@ -4,7 +4,7 @@
 </script>
 
 <template>
-        <div class="py-7 px-4">
+        <div class="px-4">
         <h2 class="text-2xl font-bold mb-4">Followers</h2>
             <TextInput :model-value="searchKeyword" placeholder="Type to search"></TextInput>
             <div class="py-9">

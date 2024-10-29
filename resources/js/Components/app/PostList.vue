@@ -20,13 +20,13 @@ const post1 = {
         {
             id: 1,
             name: 'test.png',
-            url: 'https://picsum.photos/200',
+            url: 'https://picsum.photos/300',
             mime: 'image/png'
         }   ,
         {
             id: 2,
             name: 'test2.png',
-            url: 'https://picsum.photos/200',
+            url: 'https://picsum.photos/300',
             mime: 'image/png'
         },
         {
