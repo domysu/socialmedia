@@ -4,9 +4,9 @@
 </script>
 
 <template>
-        <div class="py-4 px-4">
+        <div class="border bg-white p-3">
         <h2 class="text-2xl font-bold mb-4">Groups</h2>
-            <TextInput :model-value="searchKeyword" placeholder="Type to search"></TextInput>
+            <TextInput :model-value="searchKeyword" placeholder="Type to search" class="w-full"></TextInput>
             <div class="py-9">
                 <div v-if="false" class="text-gray-400 flex text-center">
                     You have not joined any groups yet

@@ -18,17 +18,18 @@ defineProps({
 
     <Head title="Home page" />
 
-    <div class="grid grid-cols-12 gap-3">
-        <div class="col-span-3 min-h-44 py-6 px-3">
+    <div class="grid lg:grid-cols-12 gap-3 p-3 lg:order-1">
+        <div class="lg:col-span-3">
       <GroupList></GroupList>
         </div>
-        <div class="col-span-6">
+        <div class="lg:col-span-3 lg:order-3">
+        <FollowerList></FollowerList>
+        </div>
+        <div class="lg:col-span-6 lg:order-2">
             <CreatePost></CreatePost>
             <PostList></PostList>
         </div>
-        <div class="col-span-3 py-9 flex justify-start ml-5">
-        <FollowerList></FollowerList>
-        </div>
+       
     </div>
 
 </template>
