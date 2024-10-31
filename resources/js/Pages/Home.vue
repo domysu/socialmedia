@@ -18,14 +18,14 @@ defineProps({
 
     <Head title="Home page" />
 
-    <div class="grid lg:grid-cols-12 gap-3 p-3 lg:order-1">
-        <div class="lg:col-span-3">
+    <div class="grid lg:grid-cols-12 gap-3 p-3 lg:order-1 h-full">
+        <div class="lg:col-span-3 h-full overflow-hidden">
       <GroupList></GroupList>
         </div>
-        <div class="lg:col-span-3 lg:order-3">
+        <div class="lg:col-span-3 lg:order-3 h-full overflow-hidden">
         <FollowerList></FollowerList>
         </div>
-        <div class="lg:col-span-6 lg:order-2">
+        <div class="lg:col-span-6 lg:order-2 h-full overflow-hidden flex flex-col">
             <CreatePost></CreatePost>
             <PostList></PostList>
         </div>

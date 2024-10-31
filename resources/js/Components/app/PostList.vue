@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-5">
+    <div class="mt-5 h-full overflow-auto flex-1">
         <PostItem :post="post1"></PostItem>
         <PostItem :post="post2"></PostItem>
 
