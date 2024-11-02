@@ -6,6 +6,9 @@ import TextInput from '/resources/js/Components/TextInput.vue';
 import FollowerList from '@/Components/app/FollowerList.vue';
 import PostList from '@/Components/app/PostList.vue'
 import CreatePost from '@/Components/app/CreatePost.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+
+
 
 defineProps({
 
@@ -14,10 +17,12 @@ defineProps({
 
 </script>
 
+
 <template>
+    <AuthenticatedLayout>
 
     <Head title="Home page" />
-
+    
     <div class="grid lg:grid-cols-12 gap-3 p-3 lg:order-1 h-full">
         <div class="lg:col-span-3 h-full overflow-hidden">
       <GroupList></GroupList>
@@ -31,7 +36,7 @@ defineProps({
         </div>
        
     </div>
-
+</AuthenticatedLayout>
 </template>
 
 
