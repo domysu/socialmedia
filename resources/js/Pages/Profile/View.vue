@@ -1,14 +1,15 @@
 <template>
   <AuthenticatedLayout>
     <div class="container mx-auto h-full overflow-auto">
-      <div class="relative">
+    <pre>{{ user }}</pre>
+      <div class="group relative">
         <img
-          src="https://images.inc.com/uploaded_files/image/1920x1080/getty_509107562_2000133320009280346_351827.jpg"
+          :src="coverImageSrc || user.cover_url || '/img/default_cover.jpg'"
           alt=""
           class="w-full h-[200px] object-cover"
         />
         <button
-          class="flex gap-2 absolute top-2 right-2 p-1 px-2 rounded bg-gray-200 hover:bg-gray-100 transition duration-150 ease-in-out"
+          class="opacity-0 group-hover:opacity-100 flex gap-2 absolute top-2 right-2 p-1 px-2 rounded bg-gray-200 hover:bg-gray-100 transition duration-150 ease-in-out"
           v-if="authUser && authUser.id == user.id"
         >
           <svg
@@ -27,6 +28,9 @@
           </svg>
 
           Edit Cover
+          <input type="file" class="absolute opacity-0 top-2 right-2 cursor-pointer"
+                  @change="onCoverChange"
+          >
         </button>
         <div class="flex bg-white">
           <img
@@ -128,9 +132,12 @@ import { usePage } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Edit from "./Edit.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import { ref } from "vue";
 
 const authUser = usePage().props.auth.user;
+let coverImageFile = null;
 
+const coverImageSrc = ref();
 defineProps({
   mustVerifyEmail: {
     type: Boolean,
@@ -142,5 +149,21 @@ defineProps({
     type: Object,
   },
 });
+
+function onCoverChange(event){
+
+  console.log(event)
+  coverImageFile = event.target.files[0]
+  if(coverImageFile){
+    const reader = new FileReader();
+    reader.onload = () =>{
+      console.log("Onload")
+      coverImageSrc.value = reader.result;
+    }
+
+    reader.readAsDataURL(coverImageFile);
+
+  }
+}
 </script>
 <style></style>
