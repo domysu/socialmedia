@@ -1,77 +1,120 @@
 <template>
   <AuthenticatedLayout>
-    <div class="container mx-auto">
+    <div class="container mx-auto h-full overflow-auto">
       <div class="relative">
         <img
           src="https://images.inc.com/uploaded_files/image/1920x1080/getty_509107562_2000133320009280346_351827.jpg"
           alt=""
           class="w-full h-[200px] object-cover"
         />
+        <button
+          class="flex gap-2 absolute top-2 right-2 p-1 px-2 rounded bg-gray-200 hover:bg-gray-100 transition duration-150 ease-in-out"
+          v-if="authUser && authUser.id == user.id"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m9 12.75 3 3m0 0 3-3m-3 3v-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            />
+          </svg>
 
-        <img
-          src="https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes-thumbnail.png"
-          alt=""
-          class="w-[128px] -bottom-[40px] left-[64px] absolute rounded-full"
-        />
+          Edit Cover
+        </button>
+        <div class="flex bg-white">
+          <img
+            src="https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes-thumbnail.png"
+            alt=""
+            class="w-[128px] -mt-[64px] ml-[64px] rounded-full"
+          />
+
+          <div class="p-3 flex flex-1 justify-between items-center">
+            <h2 class="font-bold text-lg">{{ user.name }}</h2>
+
+            <PrimaryButton v-if="authUser && authUser.id == user.id" class="gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                />
+              </svg>
+
+              Edit Profile
+            </PrimaryButton>
+          </div>
+        </div>
       </div>
 
       <div>
         <TabGroup>
-          <TabList class="bg-white pl-[200px] flex">
-            <Tab
-            
-              
-              key="posts"
-              v-slot="{ selected }"
-            >
+          <TabList class="bg-white border-t">
+            <Tab v-if="authUser && authUser.id == user.id" v-slot="{ selected }">
               <button
                 :class="[
                   'px-6 py-2.5 outline-none text-sm',
-                  selected
-                    ? 'text-blue-700 border-b border-blue-700'
-                    : 'text-black',
+                  selected ? 'text-blue-700 border-b border-blue-700' : 'text-black',
+                ]"
+              >
+                About
+              </button>
+            </Tab>
+
+            <Tab key="Posts" v-slot="{ selected }">
+              <button
+                :class="[
+                  'px-6 py-2.5 text-sm outline-none text-sm',
+                  selected ? 'text-blue-700 border-b border-blue-700' : 'text-black',
                 ]"
               >
                 Posts
               </button>
             </Tab>
 
-            <Tab
-            
-              
-              key="Posts"
-              v-slot="{ selected }"
-            >
+            <Tab key="posts" v-slot="{ selected }">
               <button
                 :class="[
-                  'px-6 py-2.5 text-sm outline-none text-sm',
-                  selected
-                    ? 'text-blue-700 border-b border-blue-700'
-                    : 'text-black',
+                  'px-6 py-2.5 outline-none text-sm',
+                  selected ? 'text-blue-700 border-b border-blue-700' : 'text-black',
                 ]"
               >
-                Followers
+                Following
+              </button>
+            </Tab>
+            <Tab key="posts" v-slot="{ selected }">
+              <button
+                :class="[
+                  'px-6 py-2.5 outline-none text-sm',
+                  selected ? 'text-blue-700 border-b border-blue-700' : 'text-black',
+                ]"
+              >
+                Friends
               </button>
             </Tab>
           </TabList>
-          
 
           <TabPanels class="mt-2">
-            <TabPanel
-              key="posts"
-              class="px-5"
-            >
-            Post content
-              
+            <TabPanel v-if="authUser && authUser.id == user.id" key="posts" class="px-5">
+              <Edit :must-verify-email="mustVerifyEmail" :status="status"></Edit>
             </TabPanel>
 
-            <TabPanel
-                key="followers"
-                class="px-5"
-            >
-            Follower content
-              
-            </TabPanel>
+            <TabPanel key="followers" class="px-5"> </TabPanel>
+            <TabPanel key="followers" class="px-5"> Follower content </TabPanel>
+            <TabPanel key="followers" class="px-5"> Follower content </TabPanel>
           </TabPanels>
         </TabGroup>
       </div>
@@ -80,12 +123,24 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue";
 import { usePage } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import Edit from "./Edit.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 
-const user = usePage().props.auth.user;
+const authUser = usePage().props.auth.user;
 
+defineProps({
+  mustVerifyEmail: {
+    type: Boolean,
+  },
+  status: {
+    type: String,
+  },
+  user: {
+    type: Object,
+  },
+});
 </script>
 <style></style>
