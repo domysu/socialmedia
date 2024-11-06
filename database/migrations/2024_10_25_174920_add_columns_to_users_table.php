@@ -4,19 +4,17 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class AddColumnsToUsersTable extends Migration
 {
     /**
      * Run the migrations.
      */
-    use Blueprint;
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('username');
-            $table->string('cover_path',1024)->nullable();
-            $table->string('avatar_path',1024)->nullable();
-
+            $table->string('cover_path', 1024)->nullable();
+            $table->string('avatar_path', 1024)->nullable();
         });
     }
 
@@ -31,4 +29,4 @@ return new class extends Migration
             $table->dropColumn('avatar_path');
         });
     }
-};
+}
