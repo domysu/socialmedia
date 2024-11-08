@@ -1,7 +1,18 @@
 <template>
   <AuthenticatedLayout>
     <div class="container mx-auto h-full overflow-auto">
-
+      <div
+        v-if="showNotification && status"
+        class="bg-emerald-300 font-medium text-white p-2"
+      >
+        {{ status }}
+      </div>
+      <div
+        v-if="showNotification && errors.cover"
+        class="bg-red-400 font-300 text-white p-2"
+      >
+        {{ errors.cover }}
+      </div>
       <div class="group relative">
         <img
           :src="coverImageSrc || user.cover_url || '/img/default_cover.jpg'"
@@ -181,20 +192,18 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Edit from "./Edit.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { ref } from "vue";
-import { useForm } from '@inertiajs/vue3'
-import { router } from "@inertiajs/vue3";
+import { useForm } from "@inertiajs/vue3";
 
 const imagesForm = useForm({
-  avatar:  null,
+  avatar: null,
   cover: null,
-})
+});
 
 const authUser = usePage().props.auth.user;
-
+let showNotification = ref(true);
 
 const coverImageSrc = ref();
 defineProps({
-
   errors: Object,
 
   mustVerifyEmail: {
@@ -209,27 +218,28 @@ defineProps({
 });
 
 function onCoverChange(event) {
-  console.log(event);
+
   imagesForm.cover = event.target.files[0];
   if (imagesForm.cover) {
     const reader = new FileReader();
     reader.onload = () => {
-      console.log("Onload");
       coverImageSrc.value = reader.result;
     };
 
     reader.readAsDataURL(imagesForm.cover);
   }
 }
-function cancelCoverImage()
-{
+function cancelCoverImage() {
   imagesForm.cover = null;
   coverImageSrc.value = null;
 }
 
 function submitCoverImage() {
-  imagesForm.post(route('profile.updateCover'));
-  return to_route('profile');
+  imagesForm.post(route("profile.updateCover"));
+  cancelCoverImage();
+  setTimeout(() => {
+    showNotification.value = false;
+  }, 3000);
 }
 </script>
 <style></style>

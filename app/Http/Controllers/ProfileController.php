@@ -87,6 +87,6 @@ class ProfileController extends Controller
          
             }
     
-    
+            return redirect()->route('profile', [$user])->with('status', 'Profile updated!');
     }
 }
