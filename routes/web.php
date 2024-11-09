@@ -19,8 +19,15 @@ Route::get('/u/{user:username}', [ProfileController::class, 'index'])->name('pro
 
 
 Route::middleware('auth')->group(function () {
-    Route::post('/profile/update-image', [ProfileController::class,'updateImage'])
+    Route::post('/profile/update-cover', [ProfileController::class,'updateImage'])
     ->name('profile.updateCover');
+ 
+});
+
+
+Route::middleware('auth')->group(function () {
+    Route::post('/profile/update-avatar', [ProfileController::class,'updateImage'])
+    ->name('profile.updateAvatar');
  
 });
 

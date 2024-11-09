@@ -81,11 +81,17 @@ class ProfileController extends Controller
             $cover = $data['cover'] ?? null;
     
             if ($cover) {
-                $path = $cover->store('avatars/'.$user->id, 'public');
+                $path = $cover->store('covers/'.$user->id, 'public');
                 $user->cover_path = $path;
                 $user->save();
          
             }
+           if($avatar){
+                $path = $avatar->store('avatars/'.$user->id, 'public');
+                $user->avatar_path = $path;
+                $user->save();
+            }
+            
     
             return redirect()->route('profile', [$user])->with('status', 'Profile updated!');
     }

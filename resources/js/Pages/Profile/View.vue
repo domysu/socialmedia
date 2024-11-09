@@ -13,15 +13,16 @@
       >
         {{ errors.cover }}
       </div>
-      <div class="group relative">
+      <div class="group/cover relative">
         <img
           :src="coverImageSrc || user.cover_url || '/img/default_cover.jpg'"
           alt=""
           class="w-full h-[200px] object-cover"
+          @error="user.cover_url = '/img/default_cover.jpg'"
         />
-        <div v-if="coverImageSrc == null">
+        <div v-if="isEditingImage">
           <button
-            class="opacity-0 group-hover:opacity-100 flex gap-2 absolute top-2 right-2 p-1 px-2 rounded bg-gray-200 hover:bg-gray-100 transition duration-150 ease-in-out"
+            class="opacity-0 group-hover/cover:opacity-100 flex gap-2 absolute top-2 right-2 p-1 px-2 rounded bg-gray-200 hover:bg-gray-100 transition duration-150 ease-in-out"
             v-if="authUser && authUser.id == user.id"
           >
             <svg
@@ -91,15 +92,46 @@
             Cancel
           </button>
         </div>
-        <div class="flex bg-white">
-          <img
-            src="https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes-thumbnail.png"
-            alt=""
-            class="w-[128px] -mt-[64px] ml-[64px] rounded-full"
-          />
 
+        <!-- Avatar -->
+        <div class="flex bg-white">
+          <div
+            class="hover:scale-105 cursor-pointer items-center justify-center flex -mt-[64px] ml-[64px] relative group/avatar rounded-full w-[128px] h-[128px]"
+          >
+            <img
+              :src="avatarImagesrc || user.avatar_url || '/img/default_avatar.png'"
+              alt=""
+              class="h-full w-full rounded-full"
+              @error="user.avatar_url = '/img/default_avatar.png'"
+            />
+            <button
+              v-if="isEditingImage"
+              class="absolute text-black flex items-center justify-center bottom-0 top-0 right-0 left-0 opacity-0 group-hover/avatar:opacity-100"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-12"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+                />
+              </svg>
+              <input
+                @change="onAvatarChange"
+                type="file"
+                class="w-[128px] h-[128px] left-0 right-0 bottom-0 top-0 absolute rounded-full cursor-pointer opacity-0"
+              />
+            </button>
+            <div v-else class="absolute top-2"></div>
+          </div>
           <div class="p-3 flex flex-1 justify-between items-center">
-            <h2 class="font-bold text-lg">{{ user.name }}</h2>
+            <h2 class="font-bold text-lg sm:mr-3">{{ user.name }}</h2>
 
             <PrimaryButton v-if="authUser && authUser.id == user.id" class="gap-2">
               <svg
@@ -191,7 +223,7 @@ import { usePage } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Edit from "./Edit.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useForm } from "@inertiajs/vue3";
 
 const imagesForm = useForm({
@@ -201,8 +233,11 @@ const imagesForm = useForm({
 
 const authUser = usePage().props.auth.user;
 let showNotification = ref(true);
+const isEditingImage = computed(() => !avatarImagesrc.value && !coverImageSrc.value);
 
+const avatarImagesrc = ref();
 const coverImageSrc = ref();
+
 defineProps({
   errors: Object,
 
@@ -216,11 +251,25 @@ defineProps({
     type: Object,
   },
 });
+function onAvatarChange(event) {
+  imagesForm.avatar = event.target.files[0];
+
+  if (imagesForm.avatar) {
+    imagesForm.cover = null;
+    coverImageSrc.value = null;
+    const reader = new FileReader();
+    reader.onload = () => {
+      avatarImagesrc.value = reader.result;
+    };
+    reader.readAsDataURL(imagesForm.avatar);
+  }
+}
 
 function onCoverChange(event) {
-
   imagesForm.cover = event.target.files[0];
   if (imagesForm.cover) {
+    imagesForm.avatar = null;
+    avatarImagesrc.value = null;
     const reader = new FileReader();
     reader.onload = () => {
       coverImageSrc.value = reader.result;
@@ -232,10 +281,18 @@ function onCoverChange(event) {
 function cancelCoverImage() {
   imagesForm.cover = null;
   coverImageSrc.value = null;
+
+  avatarImagesrc.value = null;
+  imagesForm.avatar = null;
 }
 
 function submitCoverImage() {
-  imagesForm.post(route("profile.updateCover"));
+  if (coverImageSrc.value) {
+    imagesForm.post(route("profile.updateCover"));
+  } else {
+    imagesForm.post(route("profile.updateAvatar"));
+  }
+
   cancelCoverImage();
   setTimeout(() => {
     showNotification.value = false;
