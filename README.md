@@ -24,7 +24,7 @@ This project is a social media website currently under development. It serves as
 
 #### 1. Clone the project
 ```bash
-git clone https://github.com/thecodeholic/laravel-social-media-website.git
+git clone https://github.com/domysu/socialmedia.git
 ```
 
 #### 2. Run `composer install`
