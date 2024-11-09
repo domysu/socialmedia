@@ -6,8 +6,8 @@ This project is a social media website currently under development. It serves as
 
 ## Technologies Used
 
-- **PHP**
-- **Laravel**
+- **PHP Laravel**
+- **Inertia vue3**
 - **Tailwind CSS**
 - **Docker**
 - **Ubuntu** 
