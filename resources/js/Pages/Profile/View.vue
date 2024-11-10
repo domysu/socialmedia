@@ -132,7 +132,7 @@
           </div>
           <div class="p-3 flex flex-1 justify-between items-center">
             <h2 class="font-bold text-lg sm:mr-3">{{ user.name }}</h2>
-
+            <a :href="route('profile.updateIndex')">
             <PrimaryButton v-if="authUser && authUser.id == user.id" class="gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -151,6 +151,7 @@
 
               Edit Profile
             </PrimaryButton>
+          </a>
           </div>
         </div>
       </div>
@@ -203,10 +204,7 @@
           </TabList>
 
           <TabPanels class="mt-2">
-            <TabPanel v-if="authUser && authUser.id == user.id" key="posts" class="px-5">
-              <Edit :must-verify-email="mustVerifyEmail" :status="status"></Edit>
-            </TabPanel>
-
+            <TabPanel key="posts" class="px-5"> </TabPanel>
             <TabPanel key="followers" class="px-5"> </TabPanel>
             <TabPanel key="followers" class="px-5"> Follower content </TabPanel>
             <TabPanel key="followers" class="px-5"> Follower content </TabPanel>
@@ -218,10 +216,10 @@
 </template>
 
 <script setup>
+
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue";
 import { usePage } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import Edit from "./Edit.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { computed, ref } from "vue";
 import { useForm } from "@inertiajs/vue3";
@@ -237,6 +235,10 @@ const isEditingImage = computed(() => !avatarImagesrc.value && !coverImageSrc.va
 
 const avatarImagesrc = ref();
 const coverImageSrc = ref();
+
+const navigateToEdit = () => {
+  Inertia.visit(route('profile.updateIndex')); // Navigate to the route
+};
 
 defineProps({
   errors: Object,

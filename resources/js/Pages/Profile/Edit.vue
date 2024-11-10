@@ -5,6 +5,7 @@ import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
 import { Head } from '@inertiajs/vue3';
 
+
 defineProps({
     mustVerifyEmail: {
         type: Boolean,
@@ -15,12 +16,15 @@ defineProps({
 });
 </script>
 
+    
+    
 <template>
   
-
+    <AuthenticatedLayout>
+   
   <template>
             <h2
-                class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
+                class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200 h-full"
             >
                 Profile
             </h2>
@@ -51,5 +55,6 @@ defineProps({
                 </div>
             </div>
         </div>
-
+    </AuthenticatedLayout>
 </template>
+

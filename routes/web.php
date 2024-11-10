@@ -31,6 +31,10 @@ Route::middleware('auth')->group(function () {
  
 });
 
+    Route::middleware('auth')->group(function () {
+        Route::get('/edit', [ProfileController::class,'edit_index'])->name('profile.updateIndex');
+    
+    });
 
 
 

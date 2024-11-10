@@ -28,6 +28,13 @@ class ProfileController extends Controller
         ]);
             
      }
+     public function edit_index(User $user)
+     {
+        return Inertia::render('Profile/Edit', [
+        'mustVerifyEmail' => $user instanceof MustVerifyEmail,
+        'status'=> session('status'),
+        ]);
+     }
  
 
     /**

@@ -34,5 +34,4 @@ const PostCreating = ref(false);
 </template>
 
 <style>
-/* Add styles here if needed */
 </style>
