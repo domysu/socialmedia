@@ -1,31 +1,37 @@
 <script setup>
 import { ref } from "vue";
-
+function onSubmit()
+{
+  PostCreating.value = false;
+}
 
 const PostCreating = ref(false);
-
 </script>
 
 <template>
   <div>
-    <div @click="PostCreating = true" class="p-3 flex justify-center mb-3 border border-gray-400 rounded cursor-pointer hover:bg-gray-200">
+    <div
+      @click="PostCreating = true"
+      v-if="!PostCreating"
+      class="p-3 flex justify-center mb-3 border border-gray-400 rounded cursor-pointer hover:bg-gray-200"
+    >
       Click me to create new post
     </div>
-
+    <div v-if="PostCreating" class="">
+      <textarea name="" id="" class="w-full"></textarea>
+    </div>
     <div v-if="PostCreating" class="gap-3 flex justify-between">
       <button
         type="submit"
-        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm 
-               hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 
-               focus-visible:outline-indigo-600 relative"
+        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 relative"
       >
         Attach Files
         <input type="file" class="absolute opacity-0 bottom-0 top-0 right-0 left-0" />
       </button>
       <button
+        @click="onSubmit"
         type="submit"
-        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 
-               focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
         Submit
       </button>
@@ -33,5 +39,4 @@ const PostCreating = ref(false);
   </div>
 </template>
 
-<style>
-</style>
+<style></style>
