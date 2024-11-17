@@ -1,9 +1,9 @@
 <template>
   <div class="border bg-white rounded p-4 mb-5">
     <div class="flex gap-3 items-center">
-      <a href="javascript:void(0)">
+      <a href="javascript:void(0)" class="rounded-full">
         <img
-          :src="post.user.avatar"
+          :src="post.user.avatar_url"
           class="w-[52px] rounded-full border border-2 hover:border-blue-400"
         />
       </a>
@@ -26,12 +26,13 @@
       <DisclosurePanel>
         <div class="mt-2" v-html="post.body" />
       </DisclosurePanel>
-
-      <div class="flex justify-end">
-        <DisclosureButton class="text-blue-500 hover:underline">
-          {{ open ? "Read less" : "Read More" }}
-        </DisclosureButton>
-      </div>
+      <template v-if="post.body.length > 200">
+        <div class="flex justify-end">
+          <DisclosureButton class="text-blue-500 hover:underline">
+            {{ open ? "Read less" : "Read More" }}
+          </DisclosureButton>
+        </div>
+      </template>
     </Disclosure>
     <div class="grid grid-cols-2 gap-3 lg:grid-cols-3 place-items-center">
       <div

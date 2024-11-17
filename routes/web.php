@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
-
+use App\Http\Controllers\PostController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,12 +28,18 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/profile/update-avatar', [ProfileController::class,'updateImage'])
     ->name('profile.updateAvatar');
+
+    Route::post('/posts', [PostController::class,'store'])
+    ->name('post.create');
+
+
  
 });
 
     Route::middleware('auth')->group(function () {
         Route::get('/edit', [ProfileController::class,'edit_index'])->name('profile.updateIndex');
     
+
     });
 
 

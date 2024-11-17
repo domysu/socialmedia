@@ -12,6 +12,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 defineProps({
 
+    posts: Object,
+
 });
 
 
@@ -22,7 +24,6 @@ defineProps({
     <AuthenticatedLayout>
 
     <Head title="Home page" />
-    
     <div class="grid lg:grid-cols-12 gap-3 p-3 lg:order-1 h-full">
         <div class="lg:col-span-3 h-full overflow-hidden">
       <GroupList></GroupList>
@@ -32,7 +33,7 @@ defineProps({
         </div>
         <div class="lg:col-span-6 lg:order-2 h-full overflow-hidden flex flex-col">
             <CreatePost></CreatePost>
-            <PostList></PostList>
+            <PostList :posts="posts.data"></PostList>
         </div>
        
     </div>

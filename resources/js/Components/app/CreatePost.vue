@@ -1,11 +1,23 @@
 <script setup>
 import { ref } from "vue";
-function onSubmit()
-{
-  PostCreating.value = false;
+import TextAreaInput from '@/Components/TextAreaInput.vue'
+import { useForm } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
+
+
+function onSubmit() {
+
+    newPostForm.post(route('post.create'));
+    PostCreating.value = false;
 }
 
 const PostCreating = ref(false);
+const newPostForm = useForm({
+    body: ''
+
+})
+
+
 </script>
 
 <template>
@@ -17,12 +29,12 @@ const PostCreating = ref(false);
     >
       Click me to create new post
     </div>
-    <div v-if="PostCreating" class="">
-      <textarea name="" id="" class="w-full"></textarea>
-    </div>
+
+    <TextAreaInput v-if="PostCreating" v-model="newPostForm.body"></TextAreaInput>
+  
+
     <div v-if="PostCreating" class="gap-3 flex justify-between">
       <button
-        type="submit"
         class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 relative"
       >
         Attach Files

@@ -1,7 +1,6 @@
 <template>
     <div class="mt-5 h-full overflow-auto flex-1">
-        <PostItem :post="post1"></PostItem>
-        <PostItem :post="post2"></PostItem>
+        <PostItem v-for="post of posts" :key="post.id" :post="post" ></PostItem>
 
     </div>
 </template>
@@ -9,6 +8,11 @@
 <script setup>
 import PostItem from './PostItem.vue';
 
+
+defineProps({
+
+    posts: Array,
+})
 const post1 = {
     user: {
         id: 1,
