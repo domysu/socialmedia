@@ -31,7 +31,7 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
         $data = $request->validated();
-
+        dd($data);
         Post::create($data);
 
         return back();
@@ -66,6 +66,10 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $user = auth()->user();
+        if($user->id == $post->user_id){
+        $post->delete();
+        return back();
+        }
     }
 }

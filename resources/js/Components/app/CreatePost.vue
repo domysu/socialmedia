@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import TextAreaInput from '@/Components/TextAreaInput.vue'
 import { useForm } from "@inertiajs/vue3";
-import { router } from "@inertiajs/vue3";
 
 
 function onSubmit() {

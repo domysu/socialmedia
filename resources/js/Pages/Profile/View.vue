@@ -96,7 +96,7 @@
         <!-- Avatar -->
         <div class="flex bg-white">
           <div
-            class="hover:scale-105 cursor-pointer items-center justify-center flex -mt-[64px] ml-[64px] relative group/avatar rounded-full w-[128px] h-[128px]"
+            class="items-center justify-center flex -mt-[64px] ml-[64px] relative group/avatar rounded-full w-[128px] h-[128px]"
           >
             <img
               :src="avatarImagesrc || user.avatar_url || '/img/default_avatar.png'"
@@ -105,8 +105,8 @@
               @error="user.avatar_url = '/img/default_avatar.png'"
             />
             <button
-              v-if="isEditingImage"
-              class="absolute text-black flex items-center justify-center bottom-0 top-0 right-0 left-0 opacity-0 group-hover/avatar:opacity-100"
+              v-if="isEditingImage && authUser && authUser.id == user.id"
+              class="cursor-pointer absolute text-black flex items-center justify-center bottom-0 top-0 right-0 left-0 opacity-0 group-hover/avatar:opacity-100"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
