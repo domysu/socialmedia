@@ -35,6 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/edit', [ProfileController::class, 'edit_index'])
         ->name('profile.updateIndex');
 
+    Route::put('/posts/{post}', [PostController::class,'update'])->name('post.update');
+   
 });
 
 

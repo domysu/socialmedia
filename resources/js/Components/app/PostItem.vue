@@ -1,7 +1,7 @@
 <template>
   <div class="border bg-white rounded p-4 mb-5">
     <div class="flex gap-3 items-center relative">
-      <a href="javascript:void(0)" class="rounded-full">
+      <a href="#" @click="ToProfile()" class="rounded-full">
         <img
           :src="post.user.avatar_url"
           class="w-[52px] h-[52px] rounded-full border border-2 hover:border-blue-400"
@@ -10,7 +10,9 @@
 
       <div class="">
         <h4 class="font-bold">
-          <a href="javascript:void(0)" class="hover:underline">{{ post.user.name }} </a>
+          <a href="#" @click="ToProfile()" class="hover:underline"
+            >{{ post.user.name }}
+          </a>
           <template v-if="post.group">
             >
             <a href="javascript:void()" class="hover:underline">{{ post.group.name }}</a>
@@ -54,8 +56,9 @@
             >
               <MenuItem v-slot="{ active }">
                 <button
+                  @click="openModal"
                   :class="[
-                    active ? 'bg-violet-500 text-white gap-2' : 'text-gray-900',
+                    active ? 'bg-gray-300 text-white gap-2' : 'text-gray-900',
                     'group flex w-full items-center rounded-md px-2 py-2 text-sm gap-2',
                   ]"
                 >
@@ -81,7 +84,7 @@
                 <button
                   @click="onDelete(post.id)"
                   :class="[
-                    active ? 'bg-violet-500 text-white gap-2' : 'text-gray-900 gap-2',
+                    active ? 'bg-red-500 text-white gap-2' : 'text-gray-900 gap-2',
                     'group flex w-full items-center rounded-md px-2 py-2 text-sm',
                   ]"
                 >
@@ -196,16 +199,85 @@
       </button>
     </div>
   </div>
+
+  <TransitionRoot appear :show="isOpen" as="template">
+    <Dialog as="div" @close="closeModal" class="relative z-10">
+      <TransitionChild
+        as="template"
+        enter="duration-300 ease-out"
+        enter-from="opacity-0"
+        enter-to="opacity-100"
+        leave="duration-200 ease-in"
+        leave-from="opacity-100"
+        leave-to="opacity-0"
+      >
+        <div class="fixed inset-0 bg-black/25" />
+      </TransitionChild>
+
+      <div class="fixed inset-0 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4 text-center">
+          <TransitionChild
+            as="template"
+            enter="duration-300 ease-out"
+            enter-from="opacity-0 scale-95"
+            enter-to="opacity-100 scale-100"
+            leave="duration-200 ease-in"
+            leave-from="opacity-100 scale-100"
+            leave-to="opacity-0 scale-95"
+          >
+            <DialogPanel
+              class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
+            >
+              <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900">
+                Post Edit
+              </DialogTitle>
+              <div class="mt-2">
+               <TextAreaInput  v-model="post.body" ></TextAreaInput>
+              </div>
+
+              <div class="mt-4">
+                <button
+                  type="button"
+                  class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                  @click="onUpdate()"
+                >
+                  Submit
+                </button>
+              </div>
+            </DialogPanel>
+          </TransitionChild>
+        </div>
+      </div>
+    </Dialog>
+  </TransitionRoot>
 </template>
+
 <script setup>
-import { Menu, MenuButton, MenuItems, MenuItem, DialogDescription } from "@headlessui/vue";
+import {
+  Menu,
+  MenuButton,
+  MenuItems,
+  MenuItem,
+  DialogDescription,
+  TransitionRoot,
+  TransitionChild,
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/vue";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
-import { router, useForm } from "@inertiajs/vue3";
+import { router, useForm, } from "@inertiajs/vue3";
+import { ref } from "vue";
+import TextAreaInput from "../TextAreaInput.vue";
+
 
 const props = defineProps({
-  post: Object,
-});
+  post: {
+    type: Object
+  },
 
+  modelValue: Boolean
+});
 
 function isImage(attachment) {
   const mime = attachment.mime.split("/");
@@ -213,11 +285,33 @@ function isImage(attachment) {
   return mime[0].toLowerCase() == "image";
 }
 
-function onDelete()
-{
 
-  router.delete(route('post.delete', props.post));
+const isOpen = ref(false)
 
+
+
+function openModal() {
+  isOpen.value = true
+}
+
+function onUpdate() {
+
+  const form = useForm({
+    id: props.post.id,
+    body: props.post.body
+  
+  })
+  
+  form.put(route('post.update', props.post))
+  isOpen.value = false;
+
+}
+function onDelete() {
+  router.delete(route("post.delete", props.post));
+}
+
+function ToProfile() {
+  router.get(route("profile", props.post.user));
 }
 </script>
 

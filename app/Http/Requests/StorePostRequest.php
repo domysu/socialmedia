@@ -22,7 +22,7 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'body' => ['nullable', 'string'],
+            'body' => ['string'],
             'user_id'=> ['numeric']
         ];
     }
