@@ -118,7 +118,7 @@
                 Post Edit
               </DialogTitle>
               <div class="mt-2">
-               <TextAreaInput  v-model="post.body" ></TextAreaInput>
+               <CKEditor v-model="props.post.body"></CKEditor>
               </div>
 
               <div class="mt-4">
@@ -152,6 +152,7 @@ import {
 import { useForm, router } from "@inertiajs/vue3";
 import { ref } from 'vue';
 import TextAreaInput from "./TextAreaInput.vue"
+import CKEditor from "./CKEditor.vue";
 
 const props = defineProps({
   post: {

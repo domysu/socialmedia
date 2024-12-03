@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-5 h-full overflow-auto flex-1">
+    <div class="mt-5">
         <PostItem v-for="post of posts" :key="post.id" :post="post" ></PostItem>
 
     </div>

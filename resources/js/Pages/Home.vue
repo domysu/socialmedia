@@ -31,7 +31,7 @@ defineProps({
         <div class="lg:col-span-3 lg:order-3 h-full overflow-hidden">
         <FollowerList></FollowerList>
         </div>
-        <div class="lg:col-span-6 lg:order-2 h-full overflow-hidden flex flex-col">
+        <div class="lg:col-span-6 lg:order-2 h-full overflow-auto flex flex-col">
             <CreatePost></CreatePost>
             <PostList :posts="posts.data"></PostList>
         </div>

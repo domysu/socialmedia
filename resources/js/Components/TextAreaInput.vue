@@ -5,9 +5,9 @@
 </template>
 <script setup>
 import { defineEmits } from 'vue';
+
+
 const emit = defineEmits(['update:modelValue'])
-
-
 
 function onInputChange($event){
     emit('update:modelValue', $event.target.value)
