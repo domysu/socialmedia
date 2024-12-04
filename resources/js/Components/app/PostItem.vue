@@ -15,7 +15,7 @@
             >{{ post.user.name }}
           </a>
           <template v-if="post.group">
-            >
+            
             <a href="javascript:void()" class="hover:underline">{{ post.group.name }}</a>
           </template>
         </h4>
@@ -29,7 +29,7 @@
     </div>
 
     <Disclosure v-slot="{ open }">
-      <div v-if="!open" class="mt-2" v-html="post.body.substring(0, 100)"></div>
+      <div v-if="!open" class="mt-2" v-html="post.body.substring(0, 200)"></div>
       <DisclosurePanel>
         <div class="mt-2" v-html="post.body" />
       </DisclosurePanel>

@@ -118,7 +118,7 @@
                 Post Edit
               </DialogTitle>
               <div class="mt-2">
-               <CKEditor v-model="props.post.body"></CKEditor>
+               <CKEditor :post="props.post" v-model="props.post.body"></CKEditor>
               </div>
 
               <div class="mt-4">
@@ -163,6 +163,7 @@ const props = defineProps({
 const isOpen = ref(false)
 
 function openModal() {
+  console.log("body: ", props.post.body)
   isOpen.value = true
 }
 

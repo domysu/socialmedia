@@ -6,7 +6,7 @@ import CKEditor from '../CKEditor.vue'
 
 
 function onSubmit() {
-    console.log("body: ", newPostForm.body)
+    
     newPostForm.post(route('post.create'));
  
     PostCreating.value = false;
