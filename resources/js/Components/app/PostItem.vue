@@ -4,7 +4,7 @@
       <a href="#" @click="ToProfile()" class="rounded-full">
         <img
           :src="post.user.avatar_url || '/img/default_avatar.png'"
-           @error="post.user.avatar_url = '/img/default_avatar.png'"
+          @error="post.user.avatar_url = '/img/default_avatar.png'"
           class="w-[52px] h-[52px] rounded-full border border-2 hover:border-blue-400"
         />
       </a>
@@ -15,7 +15,6 @@
             >{{ post.user.name }}
           </a>
           <template v-if="post.group">
-            
             <a href="javascript:void()" class="hover:underline">{{ post.group.name }}</a>
           </template>
         </h4>
@@ -24,7 +23,10 @@
       </div>
 
       <div class="right-2 top-1 absolute">
-       <DiscloserButton :post="post" v-if="authUser && authUser.id == post.user.id"></DiscloserButton>
+        <DiscloserButton
+          :post="post"
+          v-if="authUser && authUser.id == post.user.id"
+        ></DiscloserButton>
       </div>
     </div>
 
@@ -115,32 +117,21 @@
       </button>
     </div>
   </div>
-
-
 </template>
 
 <script setup>
-
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
-import { router, useForm, usePage, } from "@inertiajs/vue3";
-import DiscloserButton from "../DiscloserButton.vue"
-
+import { router, useForm, usePage } from "@inertiajs/vue3";
+import DiscloserButton from "../DiscloserButton.vue";
+import { isImage } from "../../helpers.js";
 
 const authUser = usePage().props.auth.user;
 
 const props = defineProps({
   post: {
-    type: Object
+    type: Object,
   },
-
 });
-
-function isImage(attachment) {
-  const mime = attachment.mime.split("/");
-
-  return mime[0].toLowerCase() == "image";
-}
-
 
 function ToProfile() {
   router.get(route("profile", props.post.user));

@@ -10,6 +10,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 
 
+
 defineProps({
 
     posts: Object,
