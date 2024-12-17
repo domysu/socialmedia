@@ -53,10 +53,12 @@
           :src="attachment.url"
           class="cursor-pointer aspect-square"
         />
+        
         <div
           v-else
-          class="aspect-square bg-gray-100 flex flex-col justify-center items-center cursor-pointer"
+          class="aspect-square bg-gray-200 flex flex-col justify-center items-center cursor-pointer"
         >
+      
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -72,7 +74,7 @@
             />
           </svg>
 
-          {{ attachment.name }}
+          <small class="text-center">{{ attachment.name }}</small>
         </div>
       </div>
     </div>

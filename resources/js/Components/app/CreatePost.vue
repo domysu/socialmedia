@@ -6,6 +6,9 @@ import { isImage } from "../../helpers.js";
 import { XMarkIcon, DocumentIcon } from "@heroicons/vue/24/outline";
 
 function onSubmit() {
+  newPostForm.attachments = attachmentFiles.value.map(myFile => myFile.file)
+  console.log("Data", newPostForm);
+
   newPostForm.post(route("post.create"));
   PostCreating.value = false;
 
@@ -49,6 +52,7 @@ function removeFile(myFile) {
 const PostCreating = ref(false);
 const newPostForm = useForm({
   body: "",
+  attachments: [],
 });
 </script>
 

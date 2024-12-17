@@ -36,6 +36,8 @@ Route::middleware('auth')->group(function () {
         ->name('profile.updateIndex');
 
     Route::put('/posts/{post}', [PostController::class,'update'])->name('post.update');
+
+
    
 });
 

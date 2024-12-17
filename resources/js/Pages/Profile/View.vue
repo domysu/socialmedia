@@ -236,10 +236,6 @@ const isEditingImage = computed(() => !avatarImagesrc.value && !coverImageSrc.va
 const avatarImagesrc = ref();
 const coverImageSrc = ref();
 
-const navigateToEdit = () => {
-  Inertia.visit(route('profile.updateIndex')); // Navigate to the route
-};
-
 defineProps({
   errors: Object,
 

@@ -14,7 +14,9 @@ class UpdatePostRequest extends FormRequest
     public function authorize(): bool
     {
 
-       $post = Post::where('id', $this->input('id'))->where('user_id', Auth::id())->first();
+       $post = Post::where('id', $this->input('id'))
+                    ->where('user_id', Auth::id())
+                    ->first();
 
        return !!$post;
     }
