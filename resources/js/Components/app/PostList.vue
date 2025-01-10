@@ -1,18 +1,19 @@
 <template>
-    <div class="mt-5">
-        <PostItem v-for="post of posts" :key="post.id" :post="post" ></PostItem>
-
-    </div>
+  <div class="mt-5">
+    <PostItem
+      v-for="post of posts"
+      :key="post.id"
+      :post="post"
+      :isButtonPressed="isButtonPressed"
+    ></PostItem>
+  </div>
 </template>
 
 <script setup>
-import PostItem from './PostItem.vue';
-
+import PostItem from "./PostItem.vue";
 
 defineProps({
-
-    posts: Array,
-})
-
+  isButtonPressed: Boolean,
+  posts: Array,
+});
 </script>
-

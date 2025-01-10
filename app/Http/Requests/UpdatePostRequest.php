@@ -13,7 +13,7 @@ class UpdatePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-
+        // Check if the user is authorized to update the post
        $post = Post::where('id', $this->input('id'))
                     ->where('user_id', Auth::id())
                     ->first();
@@ -26,11 +26,13 @@ class UpdatePostRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    
+    public function rules(): array 
     {
         return [ 
             'body' =>       ['string'],
-            'user_id' =>    'numerical',
+            'user_id' =>    'numeric', 
+            'attachments' => ['array', 'nullable'], 
         ];
     }
 }

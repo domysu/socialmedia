@@ -29,8 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/posts', [PostController::class, 'store'])
         ->name('post.create');
 
-    Route::delete('/posts/{post}', [PostController::class,'destroy'])->name('post.delete');
-
+    Route::delete('/posts/{post}', [PostController::class,  'destroy'])->name('post.delete');
 
     Route::get('/edit', [ProfileController::class, 'edit_index'])
         ->name('profile.updateIndex');

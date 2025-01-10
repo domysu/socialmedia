@@ -17,7 +17,5 @@ class PostAttachment extends Model
     'name',
     'created_by',
     'created_at',
-
-
    ];
 }

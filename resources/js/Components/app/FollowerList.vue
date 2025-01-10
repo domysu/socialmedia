@@ -9,11 +9,11 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
     <div class="lg:block hidden h-full">
   <div class="border bg-white p-3 h-[400px] lg:h-full flex flex-col">
     <h2 class="text-2xl font-bold mb-4">Followers</h2>
-    <TextInput
+    <!-- <TextInput
       :model-value="searchKeyword"
       placeholder="Type to search"
       class="w-full"
-    ></TextInput>
+    ></TextInput> -->
     <div class="mt-3 flex-1 overflow-auto">
       <div v-if="false" class="text-gray-400 flex text-center">
         There is nothing to show here
@@ -93,11 +93,11 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 
         <div class="border bg-white p-3 h-[400px]  flex flex-col">
    
-    <TextInput
+    <!-- <TextInput
       :model-value="searchKeyword"
       placeholder="Type to search"
       class="w-full"
-    ></TextInput>
+    ></TextInput> -->
     <div class="mt-3 flex-1 overflow-auto">
       <div v-if="false" class="text-gray-400 flex text-center">
         There is nothing to show here
