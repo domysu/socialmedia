@@ -29,8 +29,8 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2 mt-2">
                   
-                  <template v-for="myFile in computedAttachmentFiles" class="">
-                    <div class="relative group">
+                  <template v-for="myFile in computedAttachmentFiles" class="relative group object-cover aspect-square">
+                    <div class="relative group object-cover aspect-square">
                       <img :src="myFile.url" v-if="isImage(myFile.file || myFile)" class="aspect-square" />
                       <template
                         class="aspect-square bg-gray-200 flex flex-col justify-center items-center cursor-pointer"
@@ -156,11 +156,11 @@ function submit() {
   } else {
     props.post.attachments = attachmentFiles.value.map(myFile => myFile.file) // map attachments to the post object
     router.post(route("post.create"), props.post);
-    props.post.body = "";
-    attachmentFiles.value = [];
+  
   }
-
   show.value = false;
+  props.post.attachments = [];
+  props.post.body = "";
   attachmentFiles.value = [];
   deletedAttachments.value = [];
 }
