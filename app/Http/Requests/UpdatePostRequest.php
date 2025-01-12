@@ -6,6 +6,10 @@ use App\Models\Post;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\File;
+
+use function Pest\Laravel\post;
+
 class UpdatePostRequest extends FormRequest
 {
     /**
@@ -13,12 +17,7 @@ class UpdatePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Check if the user is authorized to update the post
-       $post = Post::where('id', $this->input('id'))
-                    ->where('user_id', Auth::id())
-                    ->first();
-
-       return !!$post;
+            return $this->post->user_id == Auth::id();
     }
 
     /**
@@ -32,7 +31,16 @@ class UpdatePostRequest extends FormRequest
         return [ 
             'body' =>       ['string'],
             'user_id' =>    'numeric', 
-            'attachments' => ['array', 'nullable'], 
+            'attachments' => 'array|max:10',
+            'attachments.*' => [
+                'file',
+                File::types(['jpg', 'png', 'webp',
+                             'mp3', 'wav', 'mp4',
+                             'docx', 
+                             
+                             ])->max('500mb')
+
+            ],
         ];
     }
 }

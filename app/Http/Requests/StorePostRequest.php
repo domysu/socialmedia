@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\File;
+use Illuminate\Support\Facades\Auth;
 
 class StorePostRequest extends FormRequest
 {
@@ -23,7 +24,6 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'attachments' => 'array|max:10',
             'attachments.*' => [
                 'file',
                 File::types(['jpg', 'png', 'webp',
@@ -42,7 +42,7 @@ class StorePostRequest extends FormRequest
     {
     $this->merge([ 
 
-        'user_id' => auth()->user()->id,
+        'user_id' => Auth::id(),
     ]);
     }
 }

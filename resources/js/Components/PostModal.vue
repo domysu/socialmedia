@@ -28,18 +28,17 @@
                   <CKEditor :post="props.post" v-model="props.post.body"></CKEditor>
                 </div>
                 <div class="grid grid-cols-2 gap-2 mt-2">
-                  
+
                   <template v-for="myFile in computedAttachmentFiles" class="relative group object-cover aspect-square">
-                    <div class="relative group object-cover aspect-square">
+                    <div
+                      class="relative group object-cover aspect-square flex flex-col justify-center items-center bg-gray-200">
                       <img :src="myFile.url" v-if="isImage(myFile.file || myFile)" class="aspect-square" />
-                      <template
-                        class="aspect-square bg-gray-200 flex flex-col justify-center items-center cursor-pointer"
-                        v-else>
+                      <template v-else>
                         <small class="text-center">{{ (myFile.file || myFile).name }}</small>
                         <PaperClipIcon class="h-6 w-6"></PaperClipIcon>
                       </template>
-                      
-                        
+
+
                       <button @click="onAttachmentDelete(myFile)"
                         class="absolute right-0 top-0 bg-gray-300 opacity-0 group-hover:opacity-100">
                         <XMarkIcon class="size-6 hover:opacity-50"></XMarkIcon>
@@ -47,13 +46,13 @@
 
 
                       <div v-if="myFile.deleted"
-                         class="absolute bottom-0 bg-gray-700 font-bold text-white p-1 w-full text-base text-center opacity-50 hover:opacity-100 cursor-pointer"
-                         @click="undoAttachmentDelete(myFile)">
-                        
+                        class="absolute bottom-0 bg-gray-700 font-bold text-white p-1 w-full text-base text-center opacity-50 hover:opacity-100 cursor-pointer"
+                        @click="undoAttachmentDelete(myFile)">
+
                         <small>To be deleted</small>
                       </div>
                     </div>
-                  </template> 
+                  </template>
                 </div>
 
 
@@ -112,6 +111,7 @@ const deletedAttachments = ref([]);
 function closeModal() {
   show.value = false;
   if (!props.post.id) {
+    show.value = false;
     props.post.body = "";
     props.post.attachments = [];
   }
@@ -124,41 +124,49 @@ const show = computed({
   },
 });
 
-const newPostForm = useForm({
-  body: props.post.body,
-  attachments: [],
-});
-
-
 function undoAttachmentDelete(attachment) {
   attachment.deleted = false;
   deletedAttachments.value = deletedAttachments.value.filter((a) => a !== attachment.id);
 }
 function onAttachmentDelete(attachment) {
-  if(attachment.id)
-{    attachment.deleted = true;
+  if (attachment.id) {
+    attachment.deleted = true;
     deletedAttachments.value.push(attachment.id);
   } else {
     attachmentFiles.value = attachmentFiles.value.filter((a) => a !== attachment);
   }
-;
+  ;
 }
 
 function submit() {
   const form = useForm({
     id: props.post.id,
     body: props.post.body,
+    attachments: attachmentFiles.value,
     deletedAttachments: deletedAttachments.value,
+    _method: props.post.id ? "put" : "post" // set the method to put if the post has an id, else set it to post. Because HTML forms do not support put method
   });
 
   if (props.post.id) {
-    form.put(route("post.update", props.post));
+    form.attachments = attachmentFiles.value.map(myFile => myFile.file) // map attachments to the post object
+    form.post(route("post.update", props.post.id), {
+      onSuccess: () => {
+        closeModal();
+      }
+
+    });
+
+
   } else {
+
     props.post.attachments = attachmentFiles.value.map(myFile => myFile.file) // map attachments to the post object
-    router.post(route("post.create"), props.post);
-  
+    form.post(route("post.create", props.post), {
+      onSuccess: () => {
+        closeModal();
+      }
+    });
+
   }
-  show.value = false;
   props.post.attachments = [];
   props.post.body = "";
   attachmentFiles.value = [];
@@ -168,18 +176,13 @@ function submit() {
 const attachmentFiles = ref([]);
 
 async function onAttachmentChange($event) {
-  console.log("File received: ", $event.target.files);
   for (const file of $event.target.files) {
-
-    console.log("File object:", file);
-    console.log("Is image:", isImage({ mime: file.type }));
     const myFile = {
       file,
       url: await readFile(file),
     };
     attachmentFiles.value.push(myFile);
   }
-  console.log("Attachment file:", attachmentFiles.value);
   $event.target.files = null;
 }
 
