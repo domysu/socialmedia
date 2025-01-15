@@ -3,24 +3,29 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { router, usePage } from "@inertiajs/vue3";
 import { isImage } from "../../helpers.js";
 import PostModal from "../PostModal.vue";
+import ImagePreview from "../ImagePreview.vue";
 import { defineProps, ref } from "vue";
 
 const authUser = usePage().props.auth.user;
 
 const isEditModalOpen = ref(false);
-
+const showAttachment = ref(false);
+const selectedAttachment = ref(null); 
 
 function onPostDelete(postId) {
   if (confirm("Are you sure you want to delete this post?")) {
     router.delete(route("post.delete", postId));
   }
 }
-
+function previewAttachment(attachment) {
+  showAttachment.value = true;
+  selectedAttachment.value = attachment;
+}
 const props = defineProps({
   post: {
     type: Object,
   },
-
+ 
 });
 
 function ToProfile() {
@@ -121,6 +126,7 @@ function ToProfile() {
       </MenuItems>
     </transition>
 
+    
     <PostModal :post="props.post" v-model="isEditModalOpen"></PostModal>
   </Menu>
       <a href="#" @click="ToProfile()" class="rounded-full">
@@ -170,12 +176,14 @@ function ToProfile() {
         v-for="attachment of post.attachments"
         class="w-full object-cover aspect-square"
       >
+        <ImagePreview :attachment="selectedAttachment" v-if="showAttachment" @close="showAttachment = false"></ImagePreview>
         <img
           v-if="isImage(attachment)"
           :src="attachment.url"
           class="cursor-pointer aspect-square"
+          @click="previewAttachment(attachment)"
         />
-
+        
         <div
           v-else
           class="aspect-square bg-gray-200 flex flex-col justify-center items-center cursor-pointer"

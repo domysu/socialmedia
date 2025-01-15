@@ -46,10 +46,12 @@
 
 
                       <div v-if="myFile.deleted"
-                        class="absolute bottom-0 bg-gray-700 font-bold text-white p-1 w-full text-base text-center opacity-50 hover:opacity-100 cursor-pointer"
+                        class="flex items-center absolute bottom-0 bg-gray-700 font-bold text-white p-1 w-full text-base text-center opacity-50 hover:opacity-100 cursor-pointer"
                         @click="undoAttachmentDelete(myFile)">
 
                         <small>To be deleted</small>
+                        <ArrowUturnLeftIcon class="h-5 w-4 absolute right-0 mr-3"></ArrowUturnLeftIcon>
+
                       </div>
                     </div>
                   </template>
@@ -98,6 +100,7 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+
   modelValue: Boolean,
 });
 
@@ -106,7 +109,13 @@ const computedAttachmentFiles = computed(() => {
   return [...attachmentFiles.value, ...props.post.attachments];
 });
 const emit = defineEmits(["update:modelValue"]);
-const deletedAttachments = ref([]);
+
+const show = computed({
+  get: () => props.modelValue,
+  set: (value) => {
+    emit("update:modelValue", value);
+  },
+});
 
 function closeModal() {
   show.value = false;
@@ -117,12 +126,11 @@ function closeModal() {
   }
 }
 
-const show = computed({
-  get: () => props.modelValue,
-  set: (value) => {
-    emit("update:modelValue", value);
-  },
-});
+const deletedAttachments = ref([]);
+
+
+
+
 
 function undoAttachmentDelete(attachment) {
   attachment.deleted = false;
@@ -159,7 +167,7 @@ function submit() {
 
   } else {
 
-    props.post.attachments = attachmentFiles.value.map(myFile => myFile.file) // map attachments to the post object
+    form.attachments = attachmentFiles.value.map(myFile => myFile.file) // map attachments to the post object
     form.post(route("post.create", props.post), {
       onSuccess: () => {
         closeModal();
