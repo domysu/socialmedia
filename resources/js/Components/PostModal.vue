@@ -143,10 +143,12 @@ function onAttachmentDelete(attachment) {
   } else {
     attachmentFiles.value = attachmentFiles.value.filter((a) => a !== attachment);
   }
-  ;
+  
 }
 
 function submit() {
+
+
   const form = useForm({
     id: props.post.id,
     body: props.post.body,
