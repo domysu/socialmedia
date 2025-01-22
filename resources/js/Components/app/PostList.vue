@@ -4,7 +4,6 @@
       v-for="post of posts"
       :key="post.id"
       :post="post"
-      :isButtonPressed="isButtonPressed"
     ></PostItem>
   </div>
 </template>
@@ -13,7 +12,6 @@
 import PostItem from "./PostItem.vue";
 
 defineProps({
-  isButtonPressed: Boolean,
   posts: Array,
 });
 </script>
