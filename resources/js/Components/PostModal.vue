@@ -24,14 +24,23 @@
 
                   {{ props.post.id ? "Edit Post" : "Create Post" }}
                 </DialogTitle>
+                
+
                 <div class="mt-2">
                   <CKEditor :post="props.post" v-model="props.post.body"></CKEditor>
                 </div>
+                <div v-if="showError && attachmentFiles.length" class="mt-2 bg-amber-100 p-3 border-l-4  border-amber-200 text-amber-800">
+                <span class="text-lg"> Extensions must be one of the following </span>
+                <p>
+                  <small> {{ attachmentExtensions.join(', ') }}</small>
+                </p>
+                
+                </div>
                 <div class="grid grid-cols-2 gap-2 mt-2">
 
-                  <template v-for="myFile in computedAttachmentFiles" class="relative group object-cover aspect-square">
+                  <div v-for="(myFile, ind) in computedAttachmentFiles" class="relative group object-cover aspect-square">
                     <div
-                      class="relative group object-cover aspect-square flex flex-col justify-center items-center bg-gray-200">
+                      class="relative group object-cover aspect-square flex flex-col justify-center items-center bg-gray-200 border" :class="invalidAttachments[ind] ? 'border-red-500' : ''">
                       <img :src="myFile.url" v-if="isImage(myFile.file || myFile)" class="aspect-square" />
                       <template v-else>
                         <small class="text-center">{{ (myFile.file || myFile).name }}</small>
@@ -54,7 +63,8 @@
 
                       </div>
                     </div>
-                  </template>
+                    <small class="text-red-600"> {{ invalidAttachments[ind] }}</small>
+                  </div>
                 </div>
 
 
@@ -83,18 +93,17 @@
 
 <script setup>
 import {
-  TransitionRoot,
-  TransitionChild,
   Dialog,
   DialogPanel,
   DialogTitle,
+  TransitionChild,
+  TransitionRoot,
 } from "@headlessui/vue";
-import { useForm, router } from "@inertiajs/vue3";
-import { computed, ref } from "vue";
-import CKEditor from "./CKEditor.vue";
+import { ArrowUturnLeftIcon, PaperClipIcon, XMarkIcon } from "@heroicons/vue/24/outline";
+import { useForm, usePage } from "@inertiajs/vue3";
+import { computed, defineEmits, defineProps, ref } from "vue";
 import { isImage } from "../helpers.js";
-import { PaperClipIcon, XMarkIcon, ArrowUturnLeftIcon } from "@heroicons/vue/24/outline";
-import { defineProps, defineEmits } from "vue";
+import CKEditor from "./CKEditor.vue";
 const props = defineProps({
   post: {
     type: Object,
@@ -104,6 +113,7 @@ const props = defineProps({
   modelValue: Boolean,
 });
 
+const attachmentExtensions = usePage().props.attachmentExtensions;
 // merge the attachments from the post object with the attachments from the attachmentFiles array
 const computedAttachmentFiles = computed(() => {
   return [...attachmentFiles.value, ...props.post.attachments];
@@ -118,15 +128,19 @@ const show = computed({
 });
 
 function closeModal() {
+  showError.value = false;
   show.value = false;
-  if (!props.post.id) {
-    show.value = false;
+  attachmentFiles.value = [];
+  if(!props.post.id){
     props.post.body = "";
     props.post.attachments = [];
+    
   }
 }
 
 const deletedAttachments = ref([]);
+const invalidAttachments = ref([]);
+const showError = ref(false);
 
 
 
@@ -137,11 +151,13 @@ function undoAttachmentDelete(attachment) {
   deletedAttachments.value = deletedAttachments.value.filter((a) => a !== attachment.id);
 }
 function onAttachmentDelete(attachment) {
+  invalidAttachments.value = [];
   if (attachment.id) {
     attachment.deleted = true;
     deletedAttachments.value.push(attachment.id);
   } else {
     attachmentFiles.value = attachmentFiles.value.filter((a) => a !== attachment);
+
   }
   
 }
@@ -162,6 +178,14 @@ function submit() {
     form.post(route("post.update", props.post.id), {
       onSuccess: () => {
         closeModal();
+      },
+      onError: (error) => {
+        for(const key in error){
+          if(key.includes('.')){
+            const [, index] = key.split('.');
+            invalidAttachments.value[index] = error[key]; 
+          } 
+        }
       }
 
     });
@@ -173,20 +197,33 @@ function submit() {
     form.post(route("post.create", props.post), {
       onSuccess: () => {
         closeModal();
+      },
+      onError: (error) => {
+        for(const key in error){
+          if(key.includes('.')){
+            const [, index] = key.split('.');
+            invalidAttachments.value[index] = error[key]; 
+          } 
+        }
       }
     });
 
   }
-  props.post.attachments = [];
-  props.post.body = "";
-  attachmentFiles.value = [];
-  deletedAttachments.value = [];
+
 }
+
 
 const attachmentFiles = ref([]);
 
 async function onAttachmentChange($event) {
+
   for (const file of $event.target.files) {
+    let parts = file.name.split('.');
+    let ext = parts.pop().toLowerCase();
+    if(!attachmentExtensions.includes(ext)){
+      showError.value = true;
+    }
+    
     const myFile = {
       file,
       url: await readFile(file),
@@ -206,7 +243,6 @@ async function readFile(file) {
       reader.onerror = rej;
       reader.readAsDataURL(file);
     } else {
-      console.log("Not an image");
       res(null);
     }
   });

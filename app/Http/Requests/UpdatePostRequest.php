@@ -12,6 +12,13 @@ use function Pest\Laravel\post;
 
 class UpdatePostRequest extends FormRequest
 {
+
+    public static $extensions =
+    [
+        'jpg', 'png', 'webp',
+        'mp3', 'wav', 'mp4',
+        'docx', 
+    ];
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -34,13 +41,17 @@ class UpdatePostRequest extends FormRequest
             'attachments' => 'array|max:10',
             'attachments.*' => [
                 'file',
-                File::types(['jpg', 'png', 'webp',
-                             'mp3', 'wav', 'mp4',
-                             'docx', 
-                             
-                             ])->max('500mb')
+                File::types(self::$extensions)->max('500mb')
 
             ],
+        ];
+    }
+
+    public function messages(){
+
+        return[
+            'attachments.*' => 'Invalid file',  
+
         ];
     }
 }
