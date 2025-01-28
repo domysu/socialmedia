@@ -32,9 +32,21 @@ class StorePostRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'attachments' => ['array',
+            'max:50',
+            function($attribute, $value, $fail){
+                $totalSize = collect($value)->sum(fn($file) => $file->getSize());
+
+                if($totalSize > 1  * 1024 * 1024 * 1024){ // 1024 * 1024 * 1024 = 1GB  
+                    $fail('The total size of attachments must not exceed 1GB ');
+                }
+                },  
+        ],
             'attachments.*' => [
                 'file',
-                File::types(self::$extensions)->max('500mb')
+                File::types(self::$extensions),
+                'max:500000' // 500MB
+
 
             ],
             'body' => ['string'],
@@ -46,13 +58,14 @@ class StorePostRequest extends FormRequest
     {
     $this->merge([ 
 
-        'user_id' => Auth::id(),
+        'user_id' => Auth::id(), // why its needed is because the user_id is not in the form
     ]);
     }
     public function messages(){
 
         return[
-            'attachments.*' => 'Invalid file',  
+            'attachments.*' => 'Invalid file type',
+            'attachments.*.max' => 'The file size must not exceed 500MB',
 
         ];
     }

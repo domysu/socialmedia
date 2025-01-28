@@ -26,6 +26,7 @@ public function group(): BelongsTo
 return $this->belongsTo(Group::class);
 
 }
+
 public function attachments(): HasMany
 {
 return $this->hasMany(PostAttachment::class);

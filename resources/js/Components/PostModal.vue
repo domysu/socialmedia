@@ -24,23 +24,30 @@
 
                   {{ props.post.id ? "Edit Post" : "Create Post" }}
                 </DialogTitle>
-                
+
 
                 <div class="mt-2">
                   <CKEditor :post="props.post" v-model="props.post.body"></CKEditor>
                 </div>
-                <div v-if="showError && attachmentFiles.length" class="mt-2 bg-amber-100 p-3 border-l-4  border-amber-200 text-amber-800">
-                <span class="text-lg"> Extensions must be one of the following </span>
-                <p>
-                  <small> {{ attachmentExtensions.join(', ') }}</small>
-                </p>
-                
+                <div v-if="computedInvalidExtensions"
+                  class="mt-2 bg-amber-100 p-3 border-l-4  border-amber-200 text-amber-800">
+                  <span class="text-lg"> Extensions must be one of the following </span>
+                  <p>
+                    <small> {{ attachmentExtensions.join(', ') }}</small>
+                  </p>
                 </div>
+                <div v-if="formErrors.attachments"
+                    class="mt-2 bg-red-100 p-3 border-l-4  border-red-200 text-red-800">
+                  
+                    {{ formErrors.attachments }}
+                  </div>
                 <div class="grid grid-cols-2 gap-2 mt-2">
 
-                  <div v-for="(myFile, ind) in computedAttachmentFiles" class="relative group object-cover aspect-square">
+                  <div v-for="(myFile, ind) in computedAttachmentFiles"
+                    class="relative group object-cover aspect-square">
                     <div
-                      class="relative group object-cover aspect-square flex flex-col justify-center items-center bg-gray-200 border" :class="invalidAttachments[ind] ? 'border-red-500' : ''">
+                      class="relative group object-cover aspect-square flex flex-col justify-center items-center bg-gray-200 border"
+                      :class="invalidAttachments[ind] ? 'border-red-500' : ''">
                       <img :src="myFile.url" v-if="isImage(myFile.file || myFile)" class="aspect-square" />
                       <template v-else>
                         <small class="text-center">{{ (myFile.file || myFile).name }}</small>
@@ -118,7 +125,20 @@ const attachmentExtensions = usePage().props.attachmentExtensions;
 const computedAttachmentFiles = computed(() => {
   return [...attachmentFiles.value, ...props.post.attachments];
 });
+const computedInvalidExtensions = computed(() => {
+  for (const myFile of attachmentFiles.value) {
+    let file = myFile.file;
+    let parts = file.name.split('.');
+    let ext = parts.pop().toLowerCase();
+    if (!attachmentExtensions.includes(ext)) {
+      return true;
+    }
+  }
+  return false;
+});
+
 const emit = defineEmits(["update:modelValue"]);
+
 
 const show = computed({
   get: () => props.modelValue,
@@ -128,18 +148,21 @@ const show = computed({
 });
 
 function closeModal() {
+  formErrors.value = {};
   showError.value = false;
   show.value = false;
   attachmentFiles.value = [];
-  if(!props.post.id){
+  if (!props.post.id) {
     props.post.body = "";
     props.post.attachments = [];
-    
+
   }
 }
 
+const attachmentFiles = ref([]);
 const deletedAttachments = ref([]);
 const invalidAttachments = ref([]);
+const formErrors = ref({});
 const showError = ref(false);
 
 
@@ -159,7 +182,7 @@ function onAttachmentDelete(attachment) {
     attachmentFiles.value = attachmentFiles.value.filter((a) => a !== attachment);
 
   }
-  
+
 }
 
 function submit() {
@@ -180,11 +203,12 @@ function submit() {
         closeModal();
       },
       onError: (error) => {
-        for(const key in error){
-          if(key.includes('.')){
+        formErrors.value = error;
+        for (const key in error) {
+          if (key.includes('.')) {
             const [, index] = key.split('.');
-            invalidAttachments.value[index] = error[key]; 
-          } 
+            invalidAttachments.value[index] = error[key];
+          }
         }
       }
 
@@ -199,11 +223,14 @@ function submit() {
         closeModal();
       },
       onError: (error) => {
-        for(const key in error){
-          if(key.includes('.')){
+        formErrors.value = error;
+        console.log("formError.value = ", formErrors.value);
+
+        for (const key in error) {
+          if (key.includes('.')) {
             const [, index] = key.split('.');
-            invalidAttachments.value[index] = error[key]; 
-          } 
+            invalidAttachments.value[index] = error[key];
+          }
         }
       }
     });
@@ -213,17 +240,11 @@ function submit() {
 }
 
 
-const attachmentFiles = ref([]);
 
 async function onAttachmentChange($event) {
-
   for (const file of $event.target.files) {
-    let parts = file.name.split('.');
-    let ext = parts.pop().toLowerCase();
-    if(!attachmentExtensions.includes(ext)){
-      showError.value = true;
-    }
-    
+
+
     const myFile = {
       file,
       url: await readFile(file),
