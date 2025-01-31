@@ -6,10 +6,11 @@ import PostModal from "../PostModal.vue";
 import ImagePreview from "../ImagePreview.vue";
 import { DocumentIcon,HandThumbUpIcon, ChatBubbleBottomCenterTextIcon, ArrowDownTrayIcon } from "@heroicons/vue/24/outline";
 import { defineProps, ref } from "vue";
-import { indexOf } from "ckeditor5";
+import axiosClient from "../../axiosClient";
 
 const authUser = usePage().props.auth.user;
 
+const isLiked = ref(false);
 const isEditModalOpen = ref(false);
 const showAttachment = ref(false);
 const selectedAttachment = ref(null);
@@ -66,6 +67,20 @@ const props = defineProps({
 
 function ToProfile() {
   router.get(route("profile", props.post.user));
+}
+
+function sendReaction() {
+  axiosClient.post(route("post.reaction", props.post.id), {
+    reaction: "like",
+  })
+  .then(() => {
+    props.post.has_reacted = !props.post.has_reacted;
+    props.post.has_reacted ? props.post.reactions++ : props.post.reactions--;
+
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 }
 
 
@@ -184,17 +199,23 @@ function ToProfile() {
         </div>
       </div>
     </div>
-
+    
     <div class="py-3 flex justify-start items-center">
       <button
-        class="mr-2 inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
+        @click="sendReaction"
+        class="mr-2 inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+        :class="props.post.has_reacted ? 'bg-blue-400 hover:bg-blue-300' : ''"
+        >
         
+        <span v-if="props.post.reactions > 0" class="h-5 w-5">   {{ props.post.reactions }}</span> 
         <HandThumbUpIcon class="h-5 w-5 mr-2"></HandThumbUpIcon>
-        Like
+        
+        {{ props.post.has_reacted ? 'Unlike' : 'Like' }}
       </button>
-
+    
+        
       <button
-        class="inline-flex rounded-md bg-black/20 px-3 py-1.5 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
+        class="inline-flex rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
         <ChatBubbleBottomCenterTextIcon class="h-5 w-5 mr-2"></ChatBubbleBottomCenterTextIcon>
 
         Comment

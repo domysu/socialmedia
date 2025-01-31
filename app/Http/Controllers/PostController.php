@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Enums\PostReaction;
 use App\Models\Post;
 use App\Models\PostAttachment;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Requests\StorePostRequest;
+use App\Models\PostReactions;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Enums\PostReactionEnum; // Ensure this class exists in the specified namespace
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
@@ -145,4 +150,36 @@ class PostController extends Controller
             return back();
         }
     }
+
+    public function PostReaction(Post $post, Request $request)
+    {
+        $user = Auth::user();
+        $data = $request->validate([
+            'reaction' => [Rule::enum(PostReactionEnum::class)],
+
+        ]);
+        $existingReaction = $post->reactions()->where('user_id', $user->id)->first();
+
+        if($existingReaction)
+        {
+            $existingReaction->delete();
+        }
+        else{
+        $reaction = PostReactions::create([
+            'post_id' => $post->id,
+            'user_id' => $user->id,
+            'type' => $data['reaction']
+
+        ]);
+
+        $reactions = PostReactions::where('post_id', $post->id)->count();
+
+        return response([
+            'success' => true,
+            'reactions' => $reactions,
+
+        ]);
+    }
+    }
+
 }

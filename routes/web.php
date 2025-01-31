@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
         ->name('profile.updateIndex');
 
     Route::put('/posts/{post}', [PostController::class,'update'])->name('post.update');
+    Route::post('/posts/{post}/like', [PostController::class, 'postReaction'])->name('post.reaction');
 
 
    

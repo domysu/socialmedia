@@ -11,7 +11,9 @@ class HomeController extends Controller
     
     public function index(Request $request)
     {
-        $posts = Post::query()->latest()->paginate(20);
+
+       $posts = Post::query()->withCount('reactions')->latest()->paginate(20);
+
         return Inertia::render('Home', [
             
             'posts'=> PostResource::collection($posts),
