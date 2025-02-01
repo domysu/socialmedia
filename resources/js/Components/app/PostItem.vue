@@ -3,6 +3,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { router, usePage } from "@inertiajs/vue3";
 import { isImage } from "../../helpers.js";
 import PostModal from "../PostModal.vue";
+import Comment from "./Comment.vue";
 import ImagePreview from "../ImagePreview.vue";
 import { DocumentIcon,HandThumbUpIcon, ChatBubbleBottomCenterTextIcon, ArrowDownTrayIcon } from "@heroicons/vue/24/outline";
 import { defineProps, ref } from "vue";
@@ -10,6 +11,7 @@ import axiosClient from "../../axiosClient";
 
 const authUser = usePage().props.auth.user;
 
+const isCommentModalOpen = ref(false);
 const isLiked = ref(false);
 const isEditModalOpen = ref(false);
 const showAttachment = ref(false);
@@ -215,12 +217,16 @@ function sendReaction() {
     
         
       <button
-        class="inline-flex rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75">
+        class="inline-flex rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
+        @click="isCommentModalOpen = !isCommentModalOpen"
+        >
+        <span v-if="props.post.comment.length > 0" class="h-5 w-5 mr-1"> {{ props.post.comment.length }} </span>
         <ChatBubbleBottomCenterTextIcon class="h-5 w-5 mr-2"></ChatBubbleBottomCenterTextIcon>
 
-        Comment
+        Comments
       </button>
     </div>
+    <Comment v-if="isCommentModalOpen" :post="props.post"></Comment>
   </div>
 </template>
 

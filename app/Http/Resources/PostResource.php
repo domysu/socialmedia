@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Storage as FacadesStorage;
 use Storage;
 use App\Http\Resources\PostAttachmentResource;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\CommentResource;
+use App\Models\Comment;
+
 class PostResource extends JsonResource
 {
     /**
@@ -30,6 +33,7 @@ class PostResource extends JsonResource
             'attachments' => PostAttachmentResource::collection($this->attachments),
             'reactions' => $this->reactions_count,
             'has_reacted' => $this->reactions->contains('user_id', auth()->id()),
+            'comment' => CommentResource::collection($this->comments),
 
 
 

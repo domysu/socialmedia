@@ -10,7 +10,9 @@ use App\Http\Requests\UpdatePostRequest;
 use App\Http\Requests\StorePostRequest;
 use App\Models\PostReactions;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Enums\PostReactionEnum; // Ensure this class exists in the specified namespace
+use App\Http\Enums\PostReactionEnum;
+use App\Models\Comment;
+use App\Http\Resources\CommentResource;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -180,6 +182,23 @@ class PostController extends Controller
 
         ]);
     }
+    }
+
+    public function postComment(Post $post, Request $request)
+    {
+        $user = Auth::id();
+        $data = $request->validate([
+            'comment' => 'required|string',
+        ]);
+        $postComment = Comment::create([
+            'post_id' => $post->id,
+            'comment' => $data['comment'],
+            'user_id' => $user,
+
+        ]);
+
+
+        return response(new CommentResource($postComment), 201);
     }
 
 }

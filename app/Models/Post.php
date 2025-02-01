@@ -38,4 +38,9 @@ public function reactions(): HasMany
 {
 return $this->hasMany(PostReactions::class);
 }
+
+public function comments(): HasMany
+{
+    return $this->hasMany(Comment::class);
+}
 }
