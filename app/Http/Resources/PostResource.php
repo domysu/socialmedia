@@ -34,6 +34,7 @@ class PostResource extends JsonResource
             'reactions' => $this->reactions_count,
             'has_reacted' => $this->reactions->contains('user_id', auth()->id()),
             'comment' => CommentResource::collection($this->comments),
+            'latest5Comments' => CommentResource::collection($this->latest5Comments),
 
 
 

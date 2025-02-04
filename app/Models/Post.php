@@ -14,33 +14,35 @@ class Post extends Model
     use HasFactory;
     use SoftDeletes;
 
-protected $fillable = ['post_id','user_id','body',];
+    protected $fillable = ['post_id', 'user_id', 'body',];
 
 
-public function user(): BelongsTo
-{
-return $this->belongsTo(User::class);
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class);
+    }
 
-}
-public function group(): BelongsTo
-{
-return $this->belongsTo(Group::class);
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(PostAttachment::class);
+    }
 
-}
+    public function reactions(): HasMany
+    {
+        return $this->hasMany(PostReactions::class);
+    }
 
-public function attachments(): HasMany
-{
-return $this->hasMany(PostAttachment::class);
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class)->latest();
+    }
 
-}
-
-public function reactions(): HasMany
-{
-return $this->hasMany(PostReactions::class);
-}
-
-public function comments(): HasMany
-{
-    return $this->hasMany(Comment::class);
-}
+    public function latest5Comments(): HasMany
+    {
+        return $this->hasMany(Comment::class)->latest()->limit(5);
+    }
 }
