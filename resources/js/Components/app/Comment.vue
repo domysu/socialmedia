@@ -14,14 +14,16 @@ function addComment() {
     axiosClient.post(route('post.comment', props.post), {
         comment: comment.value,
     }).then(response => {
+        props.post.comment.push(response.data);
         console.log(response.data);
+        comment.value = '';
     }).catch(error => {
         console.log(error.response.data);
     });
 }
 
-function ToProfile() {
-    router.get(route('profile', props.post.user));
+function ToProfile(user) {
+    router.get(route('profile', user));
 }
 
 </script>
@@ -33,15 +35,15 @@ function ToProfile() {
     <div class="bg-gray-50 rounded border-none" v-for="comment in props.post.comment" :key="comment.id">
         <div class="mt-3 border-none p-3 rounded">
             <div class="flex items-center gap-3">
-                <a href="#" @click="ToProfile()" class="rounded-full">
+                <a href="#" @click="ToProfile(comment.user)" class="rounded-full">
                     <img :src="comment.user.avatar_url || '/img/default_avatar.png'"
-                        @error="comment.avatar_url = '/img/default_avatar.png'"
+                        @error="comment.user.avatar_url = '/img/default_avatar.png'"
                         class="w-[48px] h-[48px] rounded-full border-2 hover:border-blue-400" />
                 </a>
 
 
                 <h3 class="font-bold">
-                    <a href="#" @click="ToProfile()" class="hover:underline">{{ comment.user.name }}</a>
+                    <a href="#" @click="ToProfile(comment.user)" class="hover:underline">{{ comment.user.name }}</a>
                 </h3>
 
             </div>
