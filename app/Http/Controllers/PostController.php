@@ -200,5 +200,33 @@ class PostController extends Controller
 
         return response(new CommentResource($postComment), 201);
     }
+    public function updateComment(Comment $comment, Request $request)
+    {
+        $user = Auth::id();
+        $data = $request->validate([
+            'comment' => 'required|string',
+        ]);
+        $comment->update([
+            'comment' => $data['comment'],
+        ]);
+
+        return response(new CommentResource($comment), 200);
+    }
+
+    public function deleteComment(Comment $comment, Request $request)
+    {
+        $user = Auth::id();
+       
+        if($user == $comment->user_id)
+        {
+            dd($comment);
+            $comment->delete();
+            return back();
+        }
+        else return response()->json(['error' => 'Forbidden'], 403);
+
+        
+    }
+ 
 
 }

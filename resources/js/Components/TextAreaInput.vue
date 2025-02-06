@@ -1,11 +1,14 @@
 
 <template>
-        <textarea class="w-full overflow-hidden resize-none rounded" @input="onInputChange"></textarea>
+        <textarea class="w-full overflow-hidden resize-none rounded" :value="modelValue" @input="onInputChange"></textarea>
     
 </template>
 <script setup>
 import { defineEmits } from 'vue';
 
+defineProps({
+    modelValue: String
+});
 
 const emit = defineEmits(['update:modelValue'])
 

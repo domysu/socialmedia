@@ -1,27 +1,67 @@
 <script setup>
 import { ref } from 'vue';
+import TextAreaInput from '../TextAreaInput.vue';
 import axiosClient from '../../axiosClient';
 import { router } from "@inertiajs/vue3";
-import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
+import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
+import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import dayjs from 'dayjs';
 
 
 
 const props = defineProps({
     post: Object,
-})
+});
 
 const comment = ref('');
+const editingCommentId = ref(null);
+const editedComment = ref('');
 function addComment() {
     axiosClient.post(route('post.comment', props.post), {
         comment: comment.value,
     }).then(response => {
-       props.post.comment.push(response.data);
+
+        props.post.latest5Comments.unshift(response.data);
         console.log(response.data);
         comment.value = '';
     }).catch(error => {
         console.log(error.response.data);
     });
+}
+function onCommentEdit(commentObj) {
+    editingCommentId.value = commentObj.id;
+    editedComment.value = commentObj.comment;
+
+
+}
+
+function saveEdit() {
+
+    axiosClient.put(route('comment.update', editingCommentId.value), {
+        comment: editedComment.value,
+    }).then(({ data }) => {
+
+        props.post.latest5Comments = props.post.latest5Comments.map((c) => {
+            return c.id === data.id ? data : c;
+        });
+        editingCommentId.value = null;
+    }).catch(error => {
+        console.log(error.response.data);
+    });
+}
+
+function onCommentDelete(commentId) {
+    if (confirm('Are you sure you want to delete this post?')) {
+        axiosClient.delete(route('comment.delete', commentId)).then(() => {
+            props.post.latest5Comments = props.post.latest5Comments.filter(c => c.id !== commentId);
+            props.post.comment.length--;
+
+
+        }).catch(error => {
+            console.log(error.response.data)
+        });
+
+    }
 }
 
 function ToProfile(user) {
@@ -34,9 +74,11 @@ function ToProfile(user) {
 
     <input class="rounded border-blue-200" placeholder="input your comment" type="text" v-model="comment" />
     <button class="bg-blue-400 hover:bg-blue-500 p-2 rounded-md ml-2" @click="addComment">Add Comment</button>
+
     <div class="bg-gray-50 rounded border-none" v-for="comment in props.post.latest5Comments" :key="comment.id">
         <div class="mt-3 border-none p-3 rounded">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 relative">
+
                 <a href="#" @click="ToProfile(comment.user)" class="rounded-full">
                     <img :src="comment.user.avatar_url || '/img/default_avatar.png'"
                         @error="comment.user.avatar_url = '/img/default_avatar.png'"
@@ -46,11 +88,49 @@ function ToProfile(user) {
                 <h3 class="font-bold">
                     <a href="#" @click="ToProfile(comment.user)" class="hover:underline">{{ comment.user.name }}</a>
                 </h3>
+                <Menu as="div" class="inline-block text-left">
+                    <div>
+                        <MenuButton class="absolute right-1 top-1">
+                            <EllipsisVerticalIcon class="size-5"></EllipsisVerticalIcon>
+                        </MenuButton>
+                    </div>
+
+                    <transition enter-active-class="transition duration-100 ease-out"
+                        enter-from-class="transform scale-95 opacity-0" enter-to-class="transform scale-100 opacity-100"
+                        leave-active-class="transition duration-75 ease-in"
+                        leave-from-class="transform scale-100 opacity-100"
+                        leave-to-class="transform scale-95 opacity-0">
+                        <MenuItems
+                            class="absolute right-1 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                            <MenuItem v-slot="{ active }">
+                            <button @click="onCommentEdit(comment)" :class="[
+                                active ? 'bg-gray-300 text-white gap-2' : 'text-gray-900',
+                                'group flex w-full items-center rounded-md px-2 py-2 text-sm gap-2',
+                            ]">
+                                <PencilIcon class="size-5"></PencilIcon>
+                                Edit
+                            </button>
+                            </MenuItem>
+                            <MenuItem v-slot="{ active }">
+                            <button @click="onCommentDelete(comment.id)" :class="[
+                                active ? 'bg-red-500 text-white gap-2' : 'text-gray-900 gap-2',
+                                'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                            ]">
+                                <TrashIcon class="size-5"></TrashIcon>
+                                Delete
+                            </button>
+                            </MenuItem>
+                        </MenuItems>
+                    </transition>
+
+
+
+                </Menu>
 
             </div>
             <small class="text-gray-400">{{ dayjs(comment.created_at).format('MMMM D, YYYY h:mm A') }}</small>
 
-            <Disclosure v-slot="{ open }">
+            <Disclosure v-if="editingCommentId !== comment.id" v-slot="{ open }">
                 <div v-if="!open" class="mt-2" v-html="comment.comment.substring(0, 200)"></div>
                 <DisclosurePanel>
                     <div class="mt-2" v-html="comment.comment" />
@@ -63,6 +143,16 @@ function ToProfile(user) {
                     </div>
                 </template>
             </Disclosure>
+            <div v-else>
+                <TextAreaInput v-model="editedComment"></TextAreaInput>
+                <div class="flex justify-end gap-3">
+                    <button class="p-2 bg-green-500 rounded hover:bg-green-600 mt-2 min-w-[66px]" @click="saveEdit">
+                        Edit </button>
+                    <button class="p-2 bg-slate-200 rounded hover:bg-slate-300 mt-2 min-w-[66px]"
+                        @click="editingCommentId = null">
+                        Cancel </button>
+                </div>
+            </div>
 
         </div>
     </div>
