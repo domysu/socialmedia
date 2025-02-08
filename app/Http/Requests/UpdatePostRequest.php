@@ -7,10 +7,11 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\File;
+use App\Http\Requests\StorePostRequest;
 
-use function Pest\Laravel\post;
 
-class UpdatePostRequest extends FormRequest
+
+class UpdatePostRequest extends StorePostRequest
 {
 
     public static $extensions =
@@ -24,7 +25,11 @@ class UpdatePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        if(isset($this->post->id))
+        {
             return $this->post->user_id == Auth::id();
+        }
+        else return true;
     }
 
     /**
@@ -35,22 +40,14 @@ class UpdatePostRequest extends FormRequest
     
     public function rules(): array 
     {
-        return [ 
-            'body' =>       ['string'],
-            'user_id' =>    'numeric', 
-            'attachments' => 'array|max:10',
-            'attachments.*' => [
-                'file',
-                File::types(self::$extensions)->max('500mb')
-
-            ],
-        ];
+       return parent::rules();
     }
 
     public function messages(){
 
         return[
-            'attachments.*' => 'Invalid file',  
+            'attachments.*' => 'Invalid file type',
+            'attachments.*.max' => 'The file size must not exceed 500MB',
 
         ];
     }

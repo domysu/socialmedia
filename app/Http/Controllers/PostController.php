@@ -91,7 +91,7 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StorePostRequest $request, Post $post)
+    public function update(UpdatePostRequest $request, Post $post)
     {
 
         $user = $request->user();
@@ -208,6 +208,7 @@ class PostController extends Controller
         ]);
         $comment->update([
             'comment' => $data['comment'],
+            
         ]);
 
         return response(new CommentResource($comment), 200);
@@ -219,9 +220,9 @@ class PostController extends Controller
        
         if($user == $comment->user_id)
         {
-            dd($comment);
+            
             $comment->delete();
-            return back();
+            return response('', 204);
         }
         else return response()->json(['error' => 'Forbidden'], 403);
 

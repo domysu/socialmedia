@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 
 
 
+
 const props = defineProps({
     post: Object,
 });
@@ -22,6 +23,7 @@ function addComment() {
     }).then(response => {
 
         props.post.latest5Comments.unshift(response.data);
+        props.post.comment.length++;
         console.log(response.data);
         comment.value = '';
     }).catch(error => {
@@ -44,24 +46,22 @@ function saveEdit() {
         props.post.latest5Comments = props.post.latest5Comments.map((c) => {
             return c.id === data.id ? data : c;
         });
-        editingCommentId.value = null;
+        
     }).catch(error => {
-        console.log(error.response.data);
+        console.log(error.response);
     });
+    editingCommentId.value = null;
+  
 }
 
-function onCommentDelete(commentId) {
-    if (confirm('Are you sure you want to delete this post?')) {
-        axiosClient.delete(route('comment.delete', commentId)).then(() => {
-            props.post.latest5Comments = props.post.latest5Comments.filter(c => c.id !== commentId);
-            props.post.comment.length--;
-
-
-        }).catch(error => {
-            console.log(error.response.data)
-        });
-
-    }
+function onCommentDelete(comment) {
+    axiosClient.delete(route('comment.delete', comment.id))
+    .then(() => {
+        props.post.latest5Comments = props.post.latest5Comments.filter(c => c.id !== comment.id);
+        props.post.comment.length--;
+    
+    });
+  
 }
 
 function ToProfile(user) {
@@ -76,6 +76,7 @@ function ToProfile(user) {
     <button class="bg-blue-400 hover:bg-blue-500 p-2 rounded-md ml-2" @click="addComment">Add Comment</button>
 
     <div class="bg-gray-50 rounded border-none" v-for="comment in props.post.latest5Comments" :key="comment.id">
+   
         <div class="mt-3 border-none p-3 rounded">
             <div class="flex items-center gap-3 relative">
 
@@ -112,7 +113,8 @@ function ToProfile(user) {
                             </button>
                             </MenuItem>
                             <MenuItem v-slot="{ active }">
-                            <button @click="onCommentDelete(comment.id)" :class="[
+                           
+                            <button @click="onCommentDelete(comment)" :class="[
                                 active ? 'bg-red-500 text-white gap-2' : 'text-gray-900 gap-2',
                                 'group flex w-full items-center rounded-md px-2 py-2 text-sm',
                             ]">
@@ -128,11 +130,12 @@ function ToProfile(user) {
                 </Menu>
 
             </div>
-            <small class="text-gray-400">{{ dayjs(comment.created_at).format('MMMM D, YYYY h:mm A') }}</small>
+            <small class="text-gray-400">{{ dayjs(comment.updated_at).format('MMMM D, YYYY h:mm A') }}</small>
 
             <Disclosure v-if="editingCommentId !== comment.id" v-slot="{ open }">
                 <div v-if="!open" class="mt-2" v-html="comment.comment.substring(0, 200)"></div>
                 <DisclosurePanel>
+                    
                     <div class="mt-2" v-html="comment.comment" />
                 </DisclosurePanel>
                 <template v-if="comment.comment.length > 200">
