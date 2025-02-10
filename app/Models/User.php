@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PhpOption\None;
@@ -14,7 +15,7 @@ use Spatie\Sluggable\SlugOptions;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-   
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
     use HasSlug;
@@ -52,15 +53,17 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-
-
     }
-    public function getSlugOptions() : SlugOptions
-{
-    return SlugOptions::create()
-        ->generateSlugsFrom(['name'])
-        ->saveSlugsTo('username')
-        ->usingSeparator('')
-        ->doNotGenerateSlugsOnUpdate();
-}
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom(['name'])
+            ->saveSlugsTo('username')
+            ->usingSeparator('')
+            ->doNotGenerateSlugsOnUpdate();
+    }
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class)->whereNull('deleted_at')->latest();
+    }   
 }
