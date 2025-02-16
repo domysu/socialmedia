@@ -12,13 +12,6 @@ This project is a social media website currently under development. It serves as
 - **Docker**
 - **Ubuntu** 
 
-## Planned Features
-
-- User registration and authentication (Using breeze)
-- User profiles (UI implemented)
-- Groups (not implemented yet)
-- Posting, reacting and commenting on content (not implemented yet)
-- more..
 
 ## Installation with docker
 
