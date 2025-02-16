@@ -32,9 +32,9 @@ class PostResource extends JsonResource
             'group' => $this->group,
             'attachments' => PostAttachmentResource::collection($this->attachments),
             'reactions' => $this->reactions_count,
-            'has_reacted' => $this->reactions->contains('user_id', auth()->id()),
+            'has_reacted' => $this->reactions->contains('user_id', auth()->id()), // TODO: do a query instead in HomeController
             'comment' => CommentResource::collection($this->comments),
-            'latest5Comments' => CommentResource::collection($this->latest5Comments),
+            'latest_comments' => CommentResource::collection($this->comments->sortByDesc('created_at')->take(5))
 
 
 

@@ -26,8 +26,11 @@ class CommentResource extends JsonResource
                 "cover_url" =>  Storage::url($this->user->cover_path),    
                 "avatar_url" =>  Storage::url($this->user->avatar_path),
             ],
+            'has_reacted' => $this->reactions->contains('user_id', auth()->id()), // TODO: do a query instead in HomeController
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'reactions' => $this->reactions_count,
+          
 
 
         ];

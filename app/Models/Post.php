@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
@@ -31,9 +32,9 @@ class Post extends Model
         return $this->hasMany(PostAttachment::class);
     }
 
-    public function reactions(): HasMany
+    public function reactions(): MorphMany
     {
-        return $this->hasMany(PostReactions::class);
+        return $this->morphMany(Reactions::class, 'object');
     }
 
     public function comments(): HasMany
@@ -41,8 +42,4 @@ class Post extends Model
         return $this->hasMany(Comment::class)->latest();
     }
 
-    public function latest5Comments(): HasMany
-    {
-        return $this->hasMany(Comment::class)->latest()->limit(5);
-    }
 }

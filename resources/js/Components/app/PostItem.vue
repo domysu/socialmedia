@@ -89,6 +89,7 @@ function sendReaction() {
 
 </script>
 <template>
+  
   <div class="border bg-white rounded p-4 mb-5">
 
     <div class="flex gap-3 items-center relative">

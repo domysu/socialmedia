@@ -4,7 +4,7 @@ import TextAreaInput from '../TextAreaInput.vue';
 import axiosClient from '../../axiosClient';
 import { router } from "@inertiajs/vue3";
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
-import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline';
+import { EllipsisVerticalIcon, PencilIcon, TrashIcon, HandThumbUpIcon } from '@heroicons/vue/24/outline';
 import dayjs from 'dayjs';
 
 
@@ -46,22 +46,36 @@ function saveEdit() {
         props.post.latest5Comments = props.post.latest5Comments.map((c) => {
             return c.id === data.id ? data : c;
         });
-        
+
     }).catch(error => {
         console.log(error.response);
     });
     editingCommentId.value = null;
-  
+
 }
 
 function onCommentDelete(comment) {
     axiosClient.delete(route('comment.delete', comment.id))
-    .then(() => {
-        props.post.latest5Comments = props.post.latest5Comments.filter(c => c.id !== comment.id);
-        props.post.comment.length--;
-    
-    });
-  
+        .then(() => {
+            props.post.latest5Comments = props.post.latest5Comments.filter(c => c.id !== comment.id);
+            props.post.comment.length--;
+
+        });
+
+}
+
+function sendReaction(comment) {
+    axiosClient.post(route("comment.reaction", comment.id), {
+        reaction: "like",
+    })
+        .then(() => {
+            comment.has_reacted = !comment.has_reacted
+            comment.has_reacted ? comment.reactions++ : comment.reactions--;
+
+        })
+        .catch((error) => {
+            console.log(error);
+        });
 }
 
 function ToProfile(user) {
@@ -75,8 +89,8 @@ function ToProfile(user) {
     <input class="rounded border-blue-200" placeholder="input your comment" type="text" v-model="comment" />
     <button class="bg-blue-400 hover:bg-blue-500 p-2 rounded-md ml-2" @click="addComment">Add Comment</button>
 
-    <div class="bg-gray-50 rounded border-none" v-for="comment in props.post.latest5Comments" :key="comment.id">
-   
+    <div class="bg-gray-50 rounded border-none" v-for="comment in props.post.latest_comments" :key="comment.id">
+
         <div class="mt-3 border-none p-3 rounded">
             <div class="flex items-center gap-3 relative">
 
@@ -113,7 +127,7 @@ function ToProfile(user) {
                             </button>
                             </MenuItem>
                             <MenuItem v-slot="{ active }">
-                           
+
                             <button @click="onCommentDelete(comment)" :class="[
                                 active ? 'bg-red-500 text-white gap-2' : 'text-gray-900 gap-2',
                                 'group flex w-full items-center rounded-md px-2 py-2 text-sm',
@@ -135,7 +149,7 @@ function ToProfile(user) {
             <Disclosure v-if="editingCommentId !== comment.id" v-slot="{ open }">
                 <div v-if="!open" class="mt-2" v-html="comment.comment.substring(0, 200)"></div>
                 <DisclosurePanel>
-                    
+
                     <div class="mt-2" v-html="comment.comment" />
                 </DisclosurePanel>
                 <template v-if="comment.comment.length > 200">
@@ -145,6 +159,17 @@ function ToProfile(user) {
                         </DisclosureButton>
                     </div>
                 </template>
+                <div class="text-xs mt-2 flex">
+                    <button @click="sendReaction(comment)" class="p-1 rounded mr-1 flex gap-1" :class="comment.has_reacted
+                        ? 'bg-blue-400 hover:bg-blue-300'
+                        : 'bg-neutral-300 hover:bg-blue-400'">
+                        <HandThumbUpIcon class="size-4"></HandThumbUpIcon>
+                        <p>{{ comment.reactions }}</p>
+                        Like
+
+                    </button>
+                    <button class="p-1 bg-neutral-300 rounded"> Comment</button>
+                </div>
             </Disclosure>
             <div v-else>
                 <TextAreaInput v-model="editedComment"></TextAreaInput>
