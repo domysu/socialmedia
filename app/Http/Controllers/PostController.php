@@ -159,7 +159,7 @@ class PostController extends Controller
             'reaction' => [Rule::enum(ReactionEnum::class)],
 
         ]);
-        
+
         $existingReaction = $post->reactions()->where('user_id', $user->id)->first();
         if($existingReaction)
         {
@@ -194,6 +194,7 @@ class PostController extends Controller
             'post_id' => $post->id,
             'comment' => $data['comment'],
             'user_id' => $user,
+            'reactions' => 0,
 
         ]);
 

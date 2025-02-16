@@ -21,10 +21,8 @@ function addComment() {
     axiosClient.post(route('post.comment', props.post), {
         comment: comment.value,
     }).then(response => {
-
-        props.post.latest5Comments.unshift(response.data);
+        props.post.latest_comments.unshift(response.data);
         props.post.comment.length++;
-        console.log(response.data);
         comment.value = '';
     }).catch(error => {
         console.log(error.response.data);
@@ -43,9 +41,18 @@ function saveEdit() {
         comment: editedComment.value,
     }).then(({ data }) => {
 
-        props.post.latest5Comments = props.post.latest5Comments.map((c) => {
-            return c.id === data.id ? data : c;
-        });
+        const updatedComments = [];
+        for (let i = 0; i < props.post.latest_comments.length; i++) {
+            let c = props.post.latest_comments[i];
+            if (c.id === data.id) {
+                updatedComments.push(data);
+
+            } else {
+                updatedComments.push(c);
+            }
+
+        }
+        props.post.latest_comments = updatedComments;
 
     }).catch(error => {
         console.log(error.response);
@@ -93,7 +100,6 @@ function ToProfile(user) {
 
         <div class="mt-3 border-none p-3 rounded">
             <div class="flex items-center gap-3 relative">
-
                 <a href="#" @click="ToProfile(comment.user)" class="rounded-full">
                     <img :src="comment.user.avatar_url || '/img/default_avatar.png'"
                         @error="comment.user.avatar_url = '/img/default_avatar.png'"
@@ -164,7 +170,7 @@ function ToProfile(user) {
                         ? 'bg-blue-400 hover:bg-blue-300'
                         : 'bg-neutral-300 hover:bg-blue-400'">
                         <HandThumbUpIcon class="size-4"></HandThumbUpIcon>
-                        <p>{{ comment.reactions }}</p>
+                        <p v-if="comment.reactions">{{ comment.reactions }}</p>
                         Like
 
                     </button>
