@@ -189,12 +189,14 @@ class PostController extends Controller
         $user = Auth::id();
         $data = $request->validate([
             'comment' => 'required|string',
+            'parent_id' => ['nullable'],    
         ]);
         $postComment = Comment::create([
             'post_id' => $post->id,
             'comment' => $data['comment'],
             'user_id' => $user,
-            'reactions' => 0,
+            'parent_id' => $data['parent_id'],
+        
 
         ]);
 
@@ -234,6 +236,7 @@ class PostController extends Controller
         $user = Auth::user();
         $data = $request->validate([
             'reaction' => [Rule::enum(ReactionEnum::class)],
+           
 
         ]);
         $existingReaction = $comment->reactions()->where('user_id', $user->id)->first();
@@ -247,7 +250,8 @@ class PostController extends Controller
             'object_id' => $comment->id,
             'object_type' => Comment::class,
             'user_id' => $user->id,
-            'type' => $data['reaction']
+            'type' => $data['reaction'],
+            
 
         ]);
 

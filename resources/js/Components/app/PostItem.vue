@@ -213,7 +213,9 @@ function sendReaction() {
         Comments
       </button>
     </div>
-    <Comment v-if="isCommentModalOpen" :post="props.post"></Comment>
+    
+    <Comment v-if="isCommentModalOpen" :post="props.post" :data="{comment: props.post.comment}"></Comment>
+  
   </div>
 </template>
 

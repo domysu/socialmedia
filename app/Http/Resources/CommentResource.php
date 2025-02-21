@@ -17,7 +17,7 @@ class CommentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'comment' => $this->comment,
+            'body' => $this->comment,
             'user' => [
 
                 "id" => $this->user->id,
@@ -26,7 +26,9 @@ class CommentResource extends JsonResource
                 "cover_url" =>  Storage::url($this->user->cover_path),    
                 "avatar_url" =>  Storage::url($this->user->avatar_path),
             ],
+            'comments' => CommentResource::collection($this->comments),
             'has_reacted' => $this->reactions->contains('user_id', auth()->id()), // TODO: do a query instead in HomeController
+            'parent_id' => $this->parent_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'reactions' => $this->reactions_count,

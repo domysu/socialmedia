@@ -4,7 +4,7 @@ import TextAreaInput from '../TextAreaInput.vue';
 import axiosClient from '../../axiosClient';
 import { router } from "@inertiajs/vue3";
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
-import { EllipsisVerticalIcon, PencilIcon, TrashIcon, HandThumbUpIcon } from '@heroicons/vue/24/outline';
+import { EllipsisVerticalIcon, PencilIcon, TrashIcon, HandThumbUpIcon, ChatBubbleLeftRightIcon } from '@heroicons/vue/24/outline';
 import dayjs from 'dayjs';
 
 
@@ -12,17 +12,23 @@ import dayjs from 'dayjs';
 
 const props = defineProps({
     post: Object,
+    data: Object,
+    parentId: {
+        type: Number,
+        default: null,
+    },
 });
-
+const isCommentModalOpen = ref(false);
 const comment = ref('');
 const editingCommentId = ref(null);
 const editedComment = ref('');
 function addComment() {
-    axiosClient.post(route('post.comment', props.post), {
+    
+    axiosClient.post(route('post.comment', props.post.id), {
         comment: comment.value,
+        parent_id: props.parentId,
     }).then(response => {
-        props.post.latest_comments.unshift(response.data);
-        props.post.comment.length++;
+        props.data.comment.unshift(response.data);
         comment.value = '';
     }).catch(error => {
         console.log(error.response.data);
@@ -30,7 +36,7 @@ function addComment() {
 }
 function onCommentEdit(commentObj) {
     editingCommentId.value = commentObj.id;
-    editedComment.value = commentObj.comment;
+    editedComment.value = commentObj.body;
 
 
 }
@@ -41,31 +47,25 @@ function saveEdit() {
         comment: editedComment.value,
     }).then(({ data }) => {
 
-        const updatedComments = [];
-        for (let i = 0; i < props.post.latest_comments.length; i++) {
-            let c = props.post.latest_comments[i];
-            if (c.id === data.id) {
-                updatedComments.push(data);
+        const index = props.data.comment.findIndex(c => c.id === data.id);
+        if(index !== -1)
+    {
 
-            } else {
-                updatedComments.push(c);
-            }
+        props.data.comment[index] = data;
+    }
 
-        }
-        props.post.latest_comments = updatedComments;
-
+        editingCommentId.value = null;
     }).catch(error => {
-        console.log(error.response);
+        console.log("Error saving edit", error.response);
     });
-    editingCommentId.value = null;
 
 }
 
 function onCommentDelete(comment) {
     axiosClient.delete(route('comment.delete', comment.id))
         .then(() => {
-            props.post.latest5Comments = props.post.latest5Comments.filter(c => c.id !== comment.id);
-            props.post.comment.length--;
+            props.data.comment = props.data.comment.filter(c => c.id !== comment.id);
+            props.data.comment.length--;
 
         });
 
@@ -95,8 +95,8 @@ function ToProfile(user) {
 
     <input class="rounded border-blue-200" placeholder="input your comment" type="text" v-model="comment" />
     <button class="bg-blue-400 hover:bg-blue-500 p-2 rounded-md ml-2" @click="addComment">Add Comment</button>
-
-    <div class="bg-gray-50 rounded border-none" v-for="comment in props.post.latest_comments" :key="comment.id">
+   
+    <div class="bg-gray-50 rounded border-none" v-for="comment in props.data.comment" :key="comment.id">
 
         <div class="mt-3 border-none p-3 rounded">
             <div class="flex items-center gap-3 relative">
@@ -153,12 +153,12 @@ function ToProfile(user) {
             <small class="text-gray-400">{{ dayjs(comment.updated_at).format('MMMM D, YYYY h:mm A') }}</small>
 
             <Disclosure v-if="editingCommentId !== comment.id" v-slot="{ open }">
-                <div v-if="!open" class="mt-2" v-html="comment.comment.substring(0, 200)"></div>
+                <div v-if="!open" class="mt-2" v-html="comment.body.substring(0, 200)"></div>
                 <DisclosurePanel>
 
-                    <div class="mt-2" v-html="comment.comment" />
+                    <div class="mt-2" v-html="comment.body" />
                 </DisclosurePanel>
-                <template v-if="comment.comment.length > 200">
+                <template v-if="comment.body.length > 200">
                     <div class="flex justify-end">
                         <DisclosureButton class="text-blue-500 hover:underline">
                             {{ open ? "Read less" : "Read More" }}
@@ -166,7 +166,7 @@ function ToProfile(user) {
                     </div>
                 </template>
                 <div class="text-xs mt-2 flex">
-                    <button @click="sendReaction(comment)" class="p-1 rounded mr-1 flex gap-1" :class="comment.has_reacted
+                    <button @click="sendReaction(comment)" class="p-2 rounded mr-1 flex gap-1" :class="comment.has_reacted
                         ? 'bg-blue-400 hover:bg-blue-300'
                         : 'bg-neutral-300 hover:bg-blue-400'">
                         <HandThumbUpIcon class="size-4"></HandThumbUpIcon>
@@ -174,7 +174,10 @@ function ToProfile(user) {
                         Like
 
                     </button>
-                    <button class="p-1 bg-neutral-300 rounded"> Comment</button>
+                    <button @click="isCommentModalOpen = !isCommentModalOpen" class="p-2 bg-neutral-300 rounded flex gap-1 hover:bg-neutral-400">
+                    <ChatBubbleLeftRightIcon class="size-4"></ChatBubbleLeftRightIcon>
+                     Reply 
+                     </button>
                 </div>
             </Disclosure>
             <div v-else>
@@ -187,8 +190,10 @@ function ToProfile(user) {
                         Cancel </button>
                 </div>
             </div>
-
         </div>
+       <div class="p-5">
+        <Comment v-if="isCommentModalOpen" :post="props.post" :data="{comment: comment.comments}" :parent-id="comment.id"></Comment>
+    </div>
     </div>
 
 
