@@ -21,9 +21,10 @@ const props = defineProps({
 const isCommentModalOpen = ref(false);
 const comment = ref('');
 const editingCommentId = ref(null);
+const commentModalId = ref(null);
 const editedComment = ref('');
 function addComment() {
-    
+
     axiosClient.post(route('post.comment', props.post.id), {
         comment: comment.value,
         parent_id: props.parentId,
@@ -34,10 +35,15 @@ function addComment() {
         console.log(error.response.data);
     });
 }
-function onCommentEdit(commentObj) {
-    editingCommentId.value = commentObj.id;
-    editedComment.value = commentObj.body;
+function onCommentEdit(comment) {
+    editingCommentId.value = comment.id;
+    editedComment.value = comment.body;
 
+
+}
+
+function onCommentOpen(comment) {
+    commentModalId.value = commentModalId.value == comment.id ? null : comment.id;
 
 }
 
@@ -48,11 +54,10 @@ function saveEdit() {
     }).then(({ data }) => {
 
         const index = props.data.comment.findIndex(c => c.id === data.id);
-        if(index !== -1)
-    {
+        if (index !== -1) {
 
-        props.data.comment[index] = data;
-    }
+            props.data.comment[index] = data;
+        }
 
         editingCommentId.value = null;
     }).catch(error => {
@@ -95,7 +100,7 @@ function ToProfile(user) {
 
     <input class="rounded border-blue-200" placeholder="input your comment" type="text" v-model="comment" />
     <button class="bg-blue-400 hover:bg-blue-500 p-2 rounded-md ml-2" @click="addComment">Add Comment</button>
-   
+
     <div class="bg-gray-50 rounded border-none" v-for="comment in props.data.comment" :key="comment.id">
 
         <div class="mt-3 border-none p-3 rounded">
@@ -174,10 +179,12 @@ function ToProfile(user) {
                         Like
 
                     </button>
-                    <button @click="isCommentModalOpen = !isCommentModalOpen" class="p-2 bg-neutral-300 rounded flex gap-1 hover:bg-neutral-400">
-                    <ChatBubbleLeftRightIcon class="size-4"></ChatBubbleLeftRightIcon>
-                     Reply 
-                     </button>
+                    <button @click="onCommentOpen(comment)"
+                        class="p-2 bg-neutral-300 rounded flex gap-1 hover:bg-neutral-400">
+                        {{ comment.comments.length }}
+                        <ChatBubbleLeftRightIcon class="size-4"></ChatBubbleLeftRightIcon>
+                        Reply
+                    </button>
                 </div>
             </Disclosure>
             <div v-else>
@@ -191,9 +198,10 @@ function ToProfile(user) {
                 </div>
             </div>
         </div>
-       <div class="p-5">
-        <Comment v-if="isCommentModalOpen" :post="props.post" :data="{comment: comment.comments}" :parent-id="comment.id"></Comment>
-    </div>
+        <div>
+            <Comment class="p-2" v-if="commentModalId == comment.id" :post="props.post" :data="{ comment: comment.comments }"
+                :parent-id="comment.id"></Comment>
+        </div>
     </div>
 
 
