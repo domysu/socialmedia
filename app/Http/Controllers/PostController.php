@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Enums\ReactionEnum;
+use App\Http\Requests\CommentRequest;
 use App\Models\Post;
 use App\Models\PostAttachment;
 use Illuminate\Http\Request;
@@ -203,14 +204,13 @@ class PostController extends Controller
 
         return response(new CommentResource($postComment), 201);
     }
-    public function updateComment(Comment $comment, Request $request)
+    public function updateComment(Comment $comment, CommentRequest $request)
     {
         $user = Auth::id();
-        $data = $request->validate([
-            'comment' => 'required|string',
-        ]);
+        $data = $request->validated();
         $comment->update([
             'comment' => $data['comment'],
+        
             
         ]);
 

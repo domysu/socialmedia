@@ -23,6 +23,8 @@ class PostResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $comments = $this->comments;
+        
         return [
             'id' => $this->id,
             'body' => $this->body,
@@ -33,11 +35,24 @@ class PostResource extends JsonResource
             'attachments' => PostAttachmentResource::collection($this->attachments),
             'reactions' => $this->reactions_count,
             'has_reacted' => $this->reactions->contains('user_id', auth()->id()), // TODO: do a query instead in HomeController
-            'comment' => CommentResource::collection($this->comments),
-            'latest_comments' => CommentResource::collection($this->comments->sortByDesc('created_at')->take(5))
+            'comment' => self::convertCommentsIntoTree($comments),
+            'latest_comments' => CommentResource::collection($this->comments->sortByDesc('created_at')->take(5)),
+            'num_of_comments' => count($comments),
 
 
 
         ];
+    }
+    private static function convertCommentsIntoTree($comments, $parentId = null): array
+    {
+        $branch = [];
+        foreach ($comments as $comment) {
+            if ($comment->parent_id == $parentId) {
+                $children = self::convertCommentsIntoTree($comments, $comment->id);
+                    $comment->childComments = $children;
+                $branch[] = new CommentResource($comment);
+            }
+        }
+        return $branch;
     }
 }

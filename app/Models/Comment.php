@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Comment extends Model
 {
 
+
+    public array $childComments = [];
     protected $fillable = ['post_id', 'comment', 'user_id', 'body', 'parent_id'];
 
     public function user() : BelongsTo
@@ -28,5 +30,17 @@ class Comment extends Model
     {
         return $this->hasMany(self::class, 'parent_id');
     }
+    public function commentsCountRecursive()
+{
+    // Get all comments related to this comment, including their replies
+    $comments = $this->comments()->withCount('comments')->get();
+
+    // Sum the replies count recursively and add the count for the current comment
+    return $comments->map(function($comment) {
+        // Sum the number of replies, including nested ones
+            
+        return $comment;
+    });
+}
   
 }

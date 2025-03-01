@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
-
+use App\Models\Comment;
 class CommentResource extends JsonResource
 {
     /**
@@ -15,6 +15,8 @@ class CommentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
+      
         return [
             'id' => $this->id,
             'body' => $this->comment,
@@ -26,8 +28,9 @@ class CommentResource extends JsonResource
                 "cover_url" =>  Storage::url($this->user->cover_path),    
                 "avatar_url" =>  Storage::url($this->user->avatar_path),
             ],
-            'comments' => CommentResource::collection($this->comments),
+            'comments' => $this->childComments,
             'has_reacted' => $this->reactions->contains('user_id', auth()->id()), // TODO: do a query instead in HomeController
+            'num_of_comments' => count($this->childComments),
             'parent_id' => $this->parent_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

@@ -9,7 +9,6 @@ import dayjs from 'dayjs';
 
 
 
-
 const props = defineProps({
     post: Object,
     data: Object,
@@ -18,11 +17,20 @@ const props = defineProps({
         default: null,
     },
 });
-const isCommentModalOpen = ref(false);
-const comment = ref('');
-const editingCommentId = ref(null);
-const commentModalId = ref(null);
-const editedComment = ref('');
+
+function findCommentAndHead(comments, parentId, head = null) {
+    for (let comment of comments) {
+        if (comment.id == parentId) {
+            return { parent: comment, head: head || comment };
+        }
+        if (comment.comments) {
+            let found = findCommentAndHead(comment.comments, parentId, head || comment);
+            if (found) return found;
+        }
+    }
+    return null;
+}
+
 function addComment() {
 
     axiosClient.post(route('post.comment', props.post.id), {
@@ -31,10 +39,38 @@ function addComment() {
     }).then(response => {
         props.data.comment.unshift(response.data);
         comment.value = '';
+      props.post.num_of_comments++;
+    
+    
+        let postReply = findCommentAndHead(props.post.comment, props.parentId);
+        console.log("ParentId: ", postReply);
+        if(postReply)
+        {
+            let {parent, head} = postReply;
+            if(parent.id != head.id)
+        {
+            parent.num_of_comments++;
+            head.num_of_comments++;
+        }
+            else{
+                parent.num_of_comments++;
+            }
+        }
+        else
+        {
+            console.log("parent id not found");
+        }
+            
     }).catch(error => {
-        console.log(error.response.data);
+        console.log(error.response);
     });
 }
+
+const comment = ref('');
+const editingCommentId = ref(null);
+const commentModalId = ref(null);
+const editedComment = ref('');
+
 function onCommentEdit(comment) {
     editingCommentId.value = comment.id;
     editedComment.value = comment.body;
@@ -47,12 +83,13 @@ function onCommentOpen(comment) {
 
 }
 
-function saveEdit() {
+function saveEdit(comment) {
 
     axiosClient.put(route('comment.update', editingCommentId.value), {
         comment: editedComment.value,
+        user_id: comment.user.id
     }).then(({ data }) => {
-
+        
         const index = props.data.comment.findIndex(c => c.id === data.id);
         if (index !== -1) {
 
@@ -61,6 +98,7 @@ function saveEdit() {
 
         editingCommentId.value = null;
     }).catch(error => {
+    
         console.log("Error saving edit", error.response);
     });
 
@@ -70,7 +108,7 @@ function onCommentDelete(comment) {
     axiosClient.delete(route('comment.delete', comment.id))
         .then(() => {
             props.data.comment = props.data.comment.filter(c => c.id !== comment.id);
-            props.data.comment.length--;
+            props.post.num_of_comments--;
 
         });
 
@@ -97,13 +135,11 @@ function ToProfile(user) {
 </script>
 <template>
 
-
+    
     <input class="rounded border-blue-200" placeholder="input your comment" type="text" v-model="comment" />
     <button class="bg-blue-400 hover:bg-blue-500 p-2 rounded-md ml-2" @click="addComment">Add Comment</button>
-
     <div class="bg-gray-50 rounded border-none" v-for="comment in props.data.comment" :key="comment.id">
-
-        <div class="mt-3 border-none p-3 rounded">
+            <div class="mt-3 border-none p-3 rounded">
             <div class="flex items-center gap-3 relative">
                 <a href="#" @click="ToProfile(comment.user)" class="rounded-full">
                     <img :src="comment.user.avatar_url || '/img/default_avatar.png'"
@@ -181,7 +217,7 @@ function ToProfile(user) {
                     </button>
                     <button @click="onCommentOpen(comment)"
                         class="p-2 bg-neutral-300 rounded flex gap-1 hover:bg-neutral-400">
-                        {{ comment.comments.length }}
+                        {{ comment.num_of_comments }}
                         <ChatBubbleLeftRightIcon class="size-4"></ChatBubbleLeftRightIcon>
                         Reply
                     </button>
@@ -190,7 +226,7 @@ function ToProfile(user) {
             <div v-else>
                 <TextAreaInput v-model="editedComment"></TextAreaInput>
                 <div class="flex justify-end gap-3">
-                    <button class="p-2 bg-green-500 rounded hover:bg-green-600 mt-2 min-w-[66px]" @click="saveEdit">
+                    <button class="p-2 bg-green-500 rounded hover:bg-green-600 mt-2 min-w-[66px]" @click="saveEdit(comment)">
                         Edit </button>
                     <button class="p-2 bg-slate-200 rounded hover:bg-slate-300 mt-2 min-w-[66px]"
                         @click="editingCommentId = null">
@@ -198,9 +234,9 @@ function ToProfile(user) {
                 </div>
             </div>
         </div>
-        <div>
-            <Comment class="p-2" v-if="commentModalId == comment.id" :post="props.post" :data="{ comment: comment.comments }"
-                :parent-id="comment.id"></Comment>
+        <div class="mt-2 px-4">
+            <Comment v-if="commentModalId == comment.id" :post="props.post"
+                :data="{ comment: comment.comments }" :parent-id="comment.id"></Comment>
         </div>
     </div>
 

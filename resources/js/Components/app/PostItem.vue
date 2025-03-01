@@ -100,7 +100,7 @@ function sendReaction() {
             <EllipsisVerticalIcon class="size-6"></EllipsisVerticalIcon>
           </MenuButton>
         </div>
-
+  
         <transition enter-active-class="transition duration-100 ease-out"
           enter-from-class="transform scale-95 opacity-0" enter-to-class="transform scale-100 opacity-100"
           leave-active-class="transition duration-75 ease-in" leave-from-class="transform scale-100 opacity-100"
@@ -136,7 +136,6 @@ function sendReaction() {
           @error="post.user.avatar_url = '/img/default_avatar.png'"
           class="w-[52px] h-[52px] rounded-full border-2 hover:border-blue-400" />
       </a>
-
       <div class="">
         <h4 class="font-bold">
           <a href="#" @click="ToProfile()" class="hover:underline">{{ post.user.name }}
@@ -169,6 +168,7 @@ function sendReaction() {
     </Disclosure>
     <div class="grid grid-cols-2 gap-3 lg:grid-cols-3 place-items-center">
       <div v-for="attachment of post.attachments" class="group/attachments relative w-full object-cover aspect-square">
+  
         <button class="absolute right-0 top-0 p-2 m-1 group-hover/attachments:opacity-100 opacity-0 hover:bg-gray-400 rounded-md z-30" @click="handleDownload(attachment)" >  
           <ArrowDownTrayIcon class="h-5 w-5"></ArrowDownTrayIcon>
         </button>
@@ -207,7 +207,7 @@ function sendReaction() {
         class="inline-flex rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
         @click="isCommentModalOpen = !isCommentModalOpen"
         >
-        <span v-if="props.post.comment.length > 0" class="h-5 w-5 mr-1"> {{ props.post.comment.length }} </span>
+        <span v-if="props.post.comment.length > 0" class="h-5 w-5 mr-1"> {{ props.post.num_of_comments}} </span>
         <ChatBubbleBottomCenterTextIcon class="h-5 w-5 mr-2"></ChatBubbleBottomCenterTextIcon>
 
         Comments
