@@ -214,8 +214,9 @@ function sendReaction() {
       </button>
     </div>
     
+    <div class="overflow-auto max-h-[350px]">
     <Comment v-if="isCommentModalOpen" :post="props.post" :data="{comment: props.post.comment}"></Comment>
-  
+    </div>
   </div>
 </template>
 

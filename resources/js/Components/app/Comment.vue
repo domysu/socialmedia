@@ -135,9 +135,10 @@ function ToProfile(user) {
 </script>
 <template>
 
-    
-    <input class="rounded border-blue-200" placeholder="input your comment" type="text" v-model="comment" />
-    <button class="bg-blue-400 hover:bg-blue-500 p-2 rounded-md ml-2" @click="addComment">Add Comment</button>
+    <div>
+    <input class="max-sm:rounded-md lg:rounded-l-md h-10 border-blue-400" placeholder="input your comment" type="text" v-model="comment" />
+    <button class="bg-blue-400 hover:bg-blue-500 p-2 max-sm:rounded-md max-sm:mt-2 lg:rounded-r-md h-10" @click="addComment">Add Comment</button>
+    </div>
     <div class="bg-gray-50 rounded border-none" v-for="comment in props.data.comment" :key="comment.id">
             <div class="mt-3 border-none p-3 rounded">
             <div class="flex items-center gap-3 relative">
