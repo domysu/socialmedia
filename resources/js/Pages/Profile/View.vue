@@ -209,7 +209,6 @@ function submitCoverImage() {
           <TabPanels class="mt-2">
             <TabPanel key="about" class="px-5"> shrek </TabPanel>
             <TabPanel key="posts" class="px-5"> 
-              <PostList :posts="post"></PostList>
              </TabPanel>
             <TabPanel key="following" class="px-5"> Following </TabPanel>
             <TabPanel key="followers" class="px-5"> Followers </TabPanel>

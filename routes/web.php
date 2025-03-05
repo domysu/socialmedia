@@ -5,14 +5,15 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GroupController;
 use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('home');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/groups', [GroupController::class, 'index'])
+    ->middleware(['auth', 'verified'])->name('groups');
+
 
 
 Route::get('/u/{user:username}', [ProfileController::class, 'index'])->name('profile');
