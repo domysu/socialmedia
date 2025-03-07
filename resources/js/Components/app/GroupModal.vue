@@ -9,6 +9,7 @@ import {
 import { XMarkIcon } from "@heroicons/vue/24/outline";
 import { computed, defineEmits, defineProps, ref, Text } from "vue";
 import TextAreaInput from "../TextAreaInput.vue";
+import { useForm } from '@inertiajs/vue3'
 
 const props = defineProps({
     modelValue: Boolean,
@@ -29,8 +30,17 @@ function closeModal() {
     emit("update:modelValue", false);
 }
 
+ const form = useForm({
+    name: "",
+    auto_approval: true,
+    about: "",
+ })
 function submit() {
-  
+  form.post(route('group.store', form), {
+  })
+  .then(response => {
+    closeModal();
+  })
 
    
     closeModal();
@@ -61,9 +71,10 @@ function submit() {
                             </DialogTitle>
 
                             <div class="mt-2">
-                                <TextAreaInput v-model="groupName" placeholder="Group name" />
-                                <input class="mb-2" type="checkbox"> Auto approve </input>
-                                <TextAreaInput v-model="groupName" placeholder="Group description" />
+                            {{ form }}
+                                <TextAreaInput v-model="form.name" placeholder="Group name" />
+                                <input class="mb-2" type="checkbox" v-model="form.auto_approval"> Auto approve </input>
+                                <TextAreaInput v-model="form.about" placeholder="Group description" />
                                 <p v-if="formErrors.groupName" class="text-red-500 text-sm">{{ formErrors.groupName }}</p>
                             </div>
 

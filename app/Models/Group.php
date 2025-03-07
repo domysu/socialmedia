@@ -15,7 +15,7 @@ class Group extends Model
     use HasSlug;
     const DELETED_AT = NULL;
     const UPDATED_AT = NULL;
-    protected $fillable =[ 'name', 'description', 'slug', 'cover_path', 'thumbnail_path', 'about', 'user_id', 'deleted_at', 'deleted_by', 'created_at', 'updated_at'];
+    protected $fillable =[ 'name', 'description', 'slug', 'auto_approval', 'cover_path', 'thumbnail_path', 'about', 'user_id', 'deleted_at', 'deleted_by', 'created_at', 'updated_at'];
 
     public function user(): BelongsTo
     {

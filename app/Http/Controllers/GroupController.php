@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateGroupRequest;
 use App\Models\Group;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use App\Models\GroupUser;
 
 
 class GroupController extends Controller
@@ -16,7 +17,7 @@ class GroupController extends Controller
      */
     public function index()
     {
-        Inertia::render('Group');
+       return Inertia::render('Group');
     }
 
     /**
@@ -33,7 +34,22 @@ class GroupController extends Controller
     public function store(StoreGroupRequest $request)
     {
         $data = $request->validated();
-        $group = Group::create($data);
+        $group = Group::create([
+            'user_id' => Auth::id(),
+            'name' => $data['name'],
+            'about' => $data['about'],
+            'auto_approval' => $data['auto_approval'],
+
+        ]);
+        $GroupUser = GroupUser::create([
+            'status' => 'On',
+            'user_id' => Auth::id(),
+            'group_id' => $group->id,
+            'role' => 'User',
+            'created_by' => Auth::id(),
+
+        ]);
+        
         return back();
          
     }
