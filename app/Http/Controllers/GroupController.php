@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreGroupRequest;
 use App\Http\Requests\UpdateGroupRequest;
+use App\Http\Resources\GroupResource;
+use App\Http\Resources\GroupUserResource;
 use App\Models\Group;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use App\Models\GroupUser;
+
 
 
 class GroupController extends Controller
@@ -15,9 +19,13 @@ class GroupController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Group $group)
     {
-       return Inertia::render('Group');
+       return Inertia::render('Group', [
+        'group' => new GroupResource($group)
+
+
+       ]);
     }
 
     /**
@@ -85,4 +93,23 @@ class GroupController extends Controller
     {
         //
     }
+
+    public function joinGroup(Group $group, Request $request)
+    {   
+        
+     
+        $GroupUser = GroupUser::create([
+            'status' => 'On',
+            'user_id' => Auth::id(),
+            'group_id' => $group->id,
+            'role' => 'User',
+            'created_by' => Auth::id(),
+
+        ]);
+
+        return response()->json([
+            'message' => 'Successfully joined the group.',
+            'GroupUser' => new GroupUserResource($GroupUser),
+        ]);
+    }   
 }

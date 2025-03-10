@@ -42,7 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/{comment}/comment', [PostController::class, 'deleteComment'])->name('comment.delete');
     Route::post('/comment/{comment}/reaction', [PostController::class, 'commentReaction'])->name('comment.reaction');
     Route::post('/groups', [GroupController::class, 'store'])->name('group.store');
-    
+    Route::get('/g/{group:slug}', [GroupController::class, 'index'])->name('group');
+    Route::post('/groups/join/{group}', [GroupController::class, 'joinGroup'])->name('group.join');
 
 
    

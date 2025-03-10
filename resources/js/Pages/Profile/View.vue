@@ -181,7 +181,7 @@ function submitCoverImage() {
 
             <Tab key="posts" v-slot="{ selected }">
               <button :class="[
-                'px-6 py-2.5 text-sm outline-none text-sm',
+                'px-6 py-2.5 text-sm outline-none',
                 selected ? 'text-blue-700 border-b border-blue-700' : 'text-black',
               ]">
                 Posts

@@ -9,6 +9,7 @@ import { defineProps, ref } from "vue";
 
 defineProps({
   posts: Object,
+  groups: Object,
 });
 
 
@@ -16,11 +17,14 @@ defineProps({
 
 <template>
   <AuthenticatedLayout>
-  
+
+
+      
     <Head title="Home" />
     <div class="grid lg:grid-cols-12 gap-3 p-3 lg:order-1 h-full">
       <div class="lg:col-span-3 h-full overflow-hidden">
-        <GroupList></GroupList>
+     
+        <GroupList :groups="groups.data"></GroupList>
         
 
       </div>

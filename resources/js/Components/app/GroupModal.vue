@@ -23,7 +23,7 @@ const show = computed({
     },
 });
 
-const groupName = ref("");
+
 const formErrors = ref({});
 
 function closeModal() {
@@ -71,7 +71,7 @@ function submit() {
                             </DialogTitle>
 
                             <div class="mt-2">
-                            {{ form }}
+                          
                                 <TextAreaInput v-model="form.name" placeholder="Group name" />
                                 <input class="mb-2" type="checkbox" v-model="form.auto_approval"> Auto approve </input>
                                 <TextAreaInput v-model="form.about" placeholder="Group description" />

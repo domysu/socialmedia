@@ -1,18 +1,31 @@
 
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { defineProps, ref } from "vue";
+import { defineProps, ref, computed } from "vue";
+import { usePage, router } from "@inertiajs/vue3";
+import axiosClient from "../axiosClient"
 
-const isInGroup = ref(true);
+const authUser = usePage().props.auth.user;
+
+
+
 const props = defineProps({
     group: Object,
 })
-
-function joinGroup(){
-    isInGroup.value = true;
+const isInGroup = computed(() => {
+  return props.group.users.some(c => c.user_id == authUser.id);
+});
+function joinGroup() {
+  axiosClient.post(route('group.join', props.group.id))
+    .then(response => {
+        props.group.users.unshift(response.data.GroupUser);
+    })
+    .catch(error => {
+      console.error('Error joining the group:', error.response.data.message);
+    });
 }
 function leaveGroup(){
-    isInGroup.value = false;
+    
 }
 
 </script>
@@ -28,8 +41,11 @@ function leaveGroup(){
                 <img class="w-full h-full object-cover" src="https://picsum.photos/600"> </img>
             </div>
             <div>
-                <h3 class="mb-2 text-xl font-black">Group name</h3>
-                <div class="text-xs text-gray-500">Group description</div>
+                <h3 class="mb-2 text-xl font-black">{{props.group.name}}</h3>
+                <div class="text-xs text-gray-500">
+                <p>{{ props.group.about }}</p>
+                
+                </div>
             </div>
             </div>
             <div class="flex p-2 gap-2 justify-between">

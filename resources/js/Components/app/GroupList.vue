@@ -3,9 +3,23 @@ import GroupItem from "/resources/js/Components/app/GroupItem.vue";
 import TextInput from "/resources/js/Components/TextInput.vue";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import GroupModal from "./GroupModal.vue";
-import {ref} from "vue";
+import {ref, defineProps} from "vue";
+import { usePage } from "@inertiajs/vue3";
 
+
+const authUser = usePage().props.auth.user;
 const isGroupCreateModalOpen = ref(false);
+
+
+
+
+const props = defineProps({
+groups: Array,
+
+});
+const groupArray = props.groups.filter(group => 
+    group.users.some(c => c.user_id === authUser.id)
+);
 
 </script>
 
@@ -23,83 +37,8 @@ const isGroupCreateModalOpen = ref(false);
               You have not joined any groups yet
             </div>
             <div v-else>
-              <GroupItem
-                image="https://picsum.photos/id/237/200/300"
-                title="Laravel developing"
-                description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-              />
 
-              <GroupItem
-                image="https://picsum.photos/id/237/200/300"
-                title="Laravel developing"
-                description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-              />
-
-              <GroupItem
-                image="https://picsum.photos/id/237/200/300"
-                title="Laravel developing"
-                description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-              />
-
-              <GroupItem
-                image="https://picsum.photos/id/237/200/300"
-                title="Laravel developing"
-                description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-              />
-
-              <GroupItem
-                image="https://picsum.photos/id/237/200/300"
-                title="Laravel developing"
-                description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-              />
-
-              <GroupItem
-                image="https://picsum.photos/id/237/200/300"
-                title="Laravel developing"
-                description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-              />
-
-              <GroupItem
-                image="https://picsum.photos/id/237/200/300"
-                title="Laravel developing"
-                description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-              />
-
-              <GroupItem
-                image="https://picsum.photos/id/237/200/300"
-                title="Laravel developing"
-                description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-              />
-
-              <GroupItem
-                image="https://picsum.photos/id/237/200/300"
-                title="Laravel developing"
-                description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-              />
-
-              <GroupItem
-                image="https://picsum.photos/id/237/200/300"
-                title="Laravel developing"
-                description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-              />
-
-              <GroupItem
-                image="https://picsum.photos/id/237/200/300"
-                title="Laravel developing"
-                description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-              />
-
-              <GroupItem
-                image="https://picsum.photos/id/237/200/300"
-                title="Laravel developing"
-                description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-              />
-
-              <GroupItem
-                image="https://picsum.photos/id/237/200/300"
-                title="Laravel developing"
-                description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-              />
+              <GroupItem v-for="group of groupArray" :key="group.id" :group="group"></GroupItem>
             </div>
           </div>
         </div>
@@ -122,83 +61,8 @@ const isGroupCreateModalOpen = ref(false);
           You have not joined any groups yet
         </div>
         <div v-else>
-          <GroupItem
-            image="https://picsum.photos/id/237/200/300"
-            title="Laravel developing"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-          />
-
-          <GroupItem
-            image="https://picsum.photos/id/237/200/300"
-            title="Laravel developing"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-          />
-
-          <GroupItem
-            image="https://picsum.photos/id/237/200/300"
-            title="Laravel developing"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-          />
-
-          <GroupItem
-            image="https://picsum.photos/id/237/200/300"
-            title="Laravel developing"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-          />
-
-          <GroupItem
-            image="https://picsum.photos/id/237/200/300"
-            title="Laravel developing"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-          />
-
-          <GroupItem
-            image="https://picsum.photos/id/237/200/300"
-            title="Laravel developing"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-          />
-
-          <GroupItem
-            image="https://picsum.photos/id/237/200/300"
-            title="Laravel developing"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-          />
-
-          <GroupItem
-            image="https://picsum.photos/id/237/200/300"
-            title="Laravel developing"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-          />
-
-          <GroupItem
-            image="https://picsum.photos/id/237/200/300"
-            title="Laravel developing"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-          />
-
-          <GroupItem
-            image="https://picsum.photos/id/237/200/300"
-            title="Laravel developing"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-          />
-
-          <GroupItem
-            image="https://picsum.photos/id/237/200/300"
-            title="Laravel developing"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-          />
-
-          <GroupItem
-            image="https://picsum.photos/id/237/200/300"
-            title="Laravel developing"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-          />
-
-          <GroupItem
-            image="https://picsum.photos/id/237/200/300"
-            title="Laravel developing"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-          />
+         
+          <GroupItem v-for="group of groupArray" :key="group.id" :group="group"></GroupItem> 
         </div>
       </div>
     </div>

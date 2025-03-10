@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PhpOption\None;
@@ -65,5 +66,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class)->whereNull('deleted_at')->latest();
-    }   
+    }
+    public function group(): hasMany
+    {
+
+        return $this->hasMany(Group::class)->latest();
+    }
+    public function groupUsers(): HasMany
+    {
+        return $this->hasMany(GroupUser::class);
+    }
 }
