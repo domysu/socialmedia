@@ -44,8 +44,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/groups', [GroupController::class, 'store'])->name('group.store');
     Route::get('/g/{group:slug}', [GroupController::class, 'index'])->name('group');
     Route::post('/groups/join/{group}', [GroupController::class, 'joinGroup'])->name('group.join');
-
-
+    Route::delete('/groups/leave/{group}', [GroupController::class, 'leaveGroup'])->name('group.leave');
+    Route::get('/{group}/users', [GroupController::class, 'getUsers'])->name('group.users');
    
 });
 

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use App\Models\GroupUser;
+use App\Models\User;
 
 
 
@@ -94,7 +95,7 @@ class GroupController extends Controller
         //
     }
 
-    public function joinGroup(Group $group, Request $request)
+    public function joinGroup(Group $group)
     {   
         
      
@@ -112,4 +113,38 @@ class GroupController extends Controller
             'GroupUser' => new GroupUserResource($GroupUser),
         ]);
     }   
+
+    public function leaveGroup(Group $group)
+    {
+        $user = auth()->user();
+        $foundUser = $group->GroupUsers->firstWhere('user_id', auth()->id());
+
+      
+        if ($foundUser) {
+            $foundUser->delete(); 
+            return response()->json([
+                'message' => 'Successfully left the group',
+                'GroupUser' => $foundUser,
+                
+                ]);
+        }
+        else{
+            return response()->json(['message' => 'User not found']);
+        }
+        
+    }
+
+    public function getUsers(Group $group, User $user)
+    {
+        
+        $allUsers = $user->select('id', 'name', 'avatar_path')
+        ->whereIn('id', function ($query) use ($group)
+        {
+            $query->select('user_id')
+                ->from('group_users')
+                ->where('group_id', $group->id);
+        })->paginate(20);
+        return $allUsers;
+
+    }
 }
