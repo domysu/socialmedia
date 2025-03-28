@@ -137,7 +137,7 @@ class GroupController extends Controller
     public function getUsers(Group $group, User $user)
     {
         
-        $allUsers = $user->select('id', 'name', 'avatar_path')
+        $allUsers = $user->select('id', 'name', 'avatar_path', 'username')
         ->whereIn('id', function ($query) use ($group)
         {
             $query->select('user_id')

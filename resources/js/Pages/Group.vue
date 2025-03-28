@@ -2,13 +2,20 @@
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@headlessui/vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { defineProps, ref, computed } from "vue";
-import { usePage, router } from "@inertiajs/vue3";
+import { usePage, router, useForm } from "@inertiajs/vue3";
 import axiosClient from "../axiosClient"
+import { CubeIcon } from "@heroicons/vue/24/outline";
 import { isAxiosError } from "axios";
 
 const authUser = usePage().props.auth.user;
 
+const imagesForm = useForm({
+  avatar: null,
+  cover: null,
+});
 
+const coverImageSrc = ref();
+const avatarImageSrc = ref();
 
 const props = defineProps({
     group: Object,
@@ -37,6 +44,10 @@ function leaveGroup() {
             console.error('Error leaving the group:', error.response.data.message);
         });
 }
+
+function toProfile(user){
+    router.get(route('profile', user))
+}
 function fetchUsers(){
 
     axiosClient.get(route('group.users', props.group))
@@ -51,6 +62,35 @@ function fetchUsers(){
     })
 }
 
+function onCoverChange(event)
+{
+    imagesForm.cover = event.target.files[0];
+    if(imagesForm.cover)
+    {
+        const reader = new FileReader();
+        reader.onload = () => {
+            coverImageSrc.value = reader.result;
+        };
+        reader.readAsDataURL(imagesForm.cover);
+    }
+}
+
+
+
+
+
+function onAvatarChange(event)
+{
+imagesForm.avatar = event.target.files[0];
+if(imagesForm.avatar)
+{
+    const reader = new FileReader();
+    reader.onload = () => {
+        avatarImageSrc.value = reader.result
+    };
+    reader.readAsDataURL(imagesForm.avatar);
+}
+}
 </script>
 <template>
 
@@ -60,10 +100,23 @@ function fetchUsers(){
         <div class="mx-12 mt-5">
             <TabGroup>
             <div class="bg-white rounded shadow-lg">
-                <img class="w-full h-40 rounded" src="https://picsum.photos/2000/300"></img>
+                <div class="relative group/cover">
+                <img class="w-full h-40 rounded relative" :src="coverImageSrc || 'https://picsum.photos/2000/300'"></img>
+                <div class="absolute right-2 top-2">
+                <button class="p-1 px-2 bg-teal-400 rounded-sm text-white invisible opacity-50 hover:opacity-100 group-hover/cover:visible">
+                <input @change="onCoverChange" class="absolute opacity-0 cursor-pointer left-0 right-0 top-0 bottom-0" type="file">
+                Change
+                
+                </button>
+                </div>
+            </div>
                 <div class="flex items-center gap-3 p-3">
-                    <div class="w-24 h-24 rounded-full overflow-hidden">
-                        <img class="w-full h-full object-cover" src="https://picsum.photos/600"> </img>
+                    <div class="w-24 h-24 rounded-full overflow-hidden relative">
+                        <img class="w-full h-full object-cover" :src="avatarImageSrc || 'https://picsum.photos/600'"></img>
+                        <div class="absolute top-0 bottom-0 right-0 left-0 group/avatar cursor-pointer">
+                        <CubeIcon class="opacity-70 invisible group-hover/avatar:visible"></CubeIcon>
+                        <input @change="onAvatarChange" class="absolute right-0 bottom-0 left-0 top-0 opacity-0 cursor-pointer" type="file">
+                        </div>
                     </div>
                     <div>
                         <h3 class="mb-2 text-xl font-black">{{ props.group.name }}</h3>
@@ -122,7 +175,8 @@ function fetchUsers(){
             <div class="rounded-md shadow-xl bg-slate-50 p-4 mt-2 hover:shadow-2xl">
             <div class="flex items-center">
             <img :src="'/storage/' + user.avatar_path" @error="user.avatar_path = 'img/default_avatar.png'" alt="avatar" class="h-[52px] w-[52px] object-cover rounded-full">
-            <b class="ml-2 cursor-pointer hover:underline">{{ user.name }}</b>
+            <b @click="toProfile(user)" class="ml-2 cursor-pointer hover:underline">{{ user.name }}</b>
+            
             </div>
             
             </div>
