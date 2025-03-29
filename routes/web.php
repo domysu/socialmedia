@@ -46,6 +46,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/groups/join/{group}', [GroupController::class, 'joinGroup'])->name('group.join');
     Route::delete('/groups/leave/{group}', [GroupController::class, 'leaveGroup'])->name('group.leave');
     Route::get('/{group}/users', [GroupController::class, 'getUsers'])->name('group.users');
+    Route::post('group/update-cover/{group}', [GroupController::class, 'saveImage'])->name('group.cover.save');
+    Route::post('group/update-avatar/{group}', [GroupController::class, 'saveImage'])->name('group.avatar.save');
+
    
 });
 

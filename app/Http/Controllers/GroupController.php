@@ -147,4 +147,28 @@ class GroupController extends Controller
         return $allUsers;
 
     }
+
+    public function saveImage(Group $group, Request $request){    
+        $data = $request->validate([
+            'cover' => ['image', 'nullable'],
+            'avatar' => ['image', 'nullable'],
+        ]);
+        $cover = $data['cover'] ?? null;
+        $avatar = $data['avatar'] ?? null;
+
+        if($cover)
+        {
+            $path = $cover->store('group/covers/'.$group->id, 'public');
+            $group->cover_path = $path;
+            $group->save();
+        }
+        if($avatar)
+        {
+            $path = $avatar->store('group/avatars/'.$group->id, 'public');
+            $group->thumbnail_path = $path;
+            $group->save();
+        }
+        return back();
+
+    }
 }

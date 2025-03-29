@@ -5,7 +5,7 @@ import { defineProps, ref, computed } from "vue";
 import { usePage, router, useForm } from "@inertiajs/vue3";
 import axiosClient from "../axiosClient"
 import { CubeIcon } from "@heroicons/vue/24/outline";
-import { isAxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 
 const authUser = usePage().props.auth.user;
 
@@ -14,6 +14,10 @@ const imagesForm = useForm({
   cover: null,
 });
 
+const isEditing = computed(() => {
+
+    return coverImageSrc.value || avatarImageSrc.value;
+})
 const coverImageSrc = ref();
 const avatarImageSrc = ref();
 
@@ -74,6 +78,21 @@ function onCoverChange(event)
         reader.readAsDataURL(imagesForm.cover);
     }
 }
+function cancelEdit()
+{
+    imagesForm.cover = null;
+    imagesForm.avatar = null;
+    coverImageSrc.value = null;
+    avatarImageSrc.value = null;
+}
+function saveEdit()
+{
+    if(coverImageSrc)
+    {
+        imagesForm.post(route('group.cover.save', props.group));
+    }
+    else imagesForm.post(route('group.avatar.save', props.group));
+}
 
 
 
@@ -96,23 +115,26 @@ if(imagesForm.avatar)
 
     <AuthenticatedLayout>
 
-        <Head title="Group" />
         <div class="mx-12 mt-5">
             <TabGroup>
             <div class="bg-white rounded shadow-lg">
                 <div class="relative group/cover">
-                <img class="w-full h-40 rounded relative" :src="coverImageSrc || 'https://picsum.photos/2000/300'"></img>
-                <div class="absolute right-2 top-2">
+                <img class="w-full h-40 rounded relative" @error="props.group.cover_path = 'https://picsum.photos/2000/300'" :src="coverImageSrc || props.group.cover_path || 'https://picsum.photos/2000/300'"></img>
+                <div v-if="isEditing" class="absolute right-2 top-2">
+                    <button @click="saveEdit" class="p-1 px-2 bg-green-500 rounded-sm mr-2 text-white opacity-50 hover:opacity-100">Save</button>
+                    <button @click="cancelEdit" class="p-1 px-2 text-white bg-red-600 rounded-sm opacity-50 hover:opacity-100"> Cancel </button>
+                    
+                </div> 
+                <div v-else class="absolute right-2 top-2">
                 <button class="p-1 px-2 bg-teal-400 rounded-sm text-white invisible opacity-50 hover:opacity-100 group-hover/cover:visible">
                 <input @change="onCoverChange" class="absolute opacity-0 cursor-pointer left-0 right-0 top-0 bottom-0" type="file">
                 Change
-                
                 </button>
                 </div>
             </div>
                 <div class="flex items-center gap-3 p-3">
                     <div class="w-24 h-24 rounded-full overflow-hidden relative">
-                        <img class="w-full h-full object-cover" :src="avatarImageSrc || 'https://picsum.photos/600'"></img>
+                        <img class="w-full h-full object-cover" @error="props.group.thumbnail_path = 'https://picsum.photos/600'" :src="avatarImageSrc || props.group.thumbnail_path || 'https://picsum.photos/600'"></img>
                         <div class="absolute top-0 bottom-0 right-0 left-0 group/avatar cursor-pointer">
                         <CubeIcon class="opacity-70 invisible group-hover/avatar:visible"></CubeIcon>
                         <input @change="onAvatarChange" class="absolute right-0 bottom-0 left-0 top-0 opacity-0 cursor-pointer" type="file">

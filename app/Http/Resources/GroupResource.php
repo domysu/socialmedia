@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Storage;
 
 class GroupResource extends JsonResource
 {
@@ -20,8 +21,8 @@ class GroupResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'slug' => $this->slug,
-            'cover_path' => $this->cover_path,
-            'thumbnail_path' => $this->thumbnail_path,
+            'cover_path' => Storage::url($this->cover_path),
+            'thumbnail_path' => Storage::url($this->thumbnail_path),
             'about' => $this->about,
             'user_id' => $this->user_id,
             'deleted_at' => $this->deleted_at,
