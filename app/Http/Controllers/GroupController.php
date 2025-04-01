@@ -23,7 +23,8 @@ class GroupController extends Controller
     public function index(Group $group)
     {
        return Inertia::render('Group', [
-        'group' => new GroupResource($group)
+        'group' => new GroupResource($group),
+        'status' => session('status')
 
 
        ]);
@@ -168,7 +169,8 @@ class GroupController extends Controller
             $group->thumbnail_path = $path;
             $group->save();
         }
-        return back();
+        return redirect()->route('group', $group->slug)->with('status', 'Group updated!');
+
 
     }
 }
