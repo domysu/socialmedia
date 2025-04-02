@@ -6,7 +6,7 @@ import PostModal from "../PostModal.vue";
 import Comment from "./Comment.vue";
 import ImagePreview from "../ImagePreview.vue";
 import { DocumentIcon,HandThumbUpIcon, ChatBubbleBottomCenterTextIcon, ArrowDownTrayIcon, EllipsisVerticalIcon, PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
-import { defineProps, ref } from "vue";
+import { computed, defineProps, ref } from "vue";
 import axiosClient from "../../axiosClient";
 
 const authUser = usePage().props.auth.user;
@@ -16,6 +16,10 @@ const isLiked = ref(false);
 const isEditModalOpen = ref(false);
 const showAttachment = ref(false);
 const selectedAttachment = ref(null);
+const isEdited = computed(() => {
+
+  return props.post.created_at != props.post.updated_at;
+});
 
 function nextAttachment() {
   const index = props.post.attachments.indexOf(selectedAttachment.value);
@@ -34,9 +38,20 @@ function previousAttachment() {
 }
 function onPostDelete(postId) {
   if (confirm("Are you sure you want to delete this post?")) {
-    router.delete(route("post.delete", postId));
+    router.delete(route("post.delete", postId), {
+      onSuccess: () => {
+        router.visit(window.location.pathname);
+      },
+      onError: (error) => {
+
+        console.error("Error deleting post:", error);
+      }
+    });
+
+    };
+  
   }
-}
+
 function handleDownload(attachment) {
   if (!attachment.url) {
     console.error("Invalid attachment URL.");
@@ -146,6 +161,7 @@ function sendReaction() {
         </h4>
 
         <small class="text-gray-400">{{ post.created_at }}</small>
+        <p v-if="isEdited" class="text-gray-500 text-xs">Edited</p>
       </div>
 
       <div class="right-2 top-1 absolute">

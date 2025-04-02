@@ -65,6 +65,6 @@ const observer = new IntersectionObserver((entries) =>
       :key="post.id"
       :post="post"
     ></PostItem>
-    <div ref="loadMoreIntersect"></div>
+    <div class="h-[50px]" ref="loadMoreIntersect"></div>
   </div>
 </template>
