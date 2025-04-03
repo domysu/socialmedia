@@ -45,14 +45,14 @@ class GroupController extends Controller
     {
         $data = $request->validated();
         $group = Group::create([
-            'user_id' => Auth::id(),
+            'user_id' => Auth::id(), 
             'name' => $data['name'],
             'about' => $data['about'],
             'auto_approval' => $data['auto_approval'],
 
         ]);
         $GroupUser = GroupUser::create([
-            'status' => 'On',
+            'status' => 'Approved',
             'user_id' => Auth::id(),
             'group_id' => $group->id,
             'role' => 'User',
@@ -60,7 +60,7 @@ class GroupController extends Controller
 
         ]);
         
-        return back();
+        return response()->json(['status', 'Group created successfully']);
          
     }
 
@@ -101,7 +101,7 @@ class GroupController extends Controller
         
      
         $GroupUser = GroupUser::create([
-            'status' => 'On',
+            'status' => 'Approved',
             'user_id' => Auth::id(),
             'group_id' => $group->id,
             'role' => 'User',
@@ -129,9 +129,9 @@ class GroupController extends Controller
                 
                 ]);
         }
-        else{
+
             return response()->json(['message' => 'User not found']);
-        }
+        
         
     }
 

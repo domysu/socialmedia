@@ -13,6 +13,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Models\Follower;
 
 class ProfileController extends Controller
 {
@@ -105,4 +106,17 @@ class ProfileController extends Controller
     
             return redirect()->route('profile', [$user])->with('status', 'Profile updated');
     }
+  public function followUser(Request $request)
+    {
+        $data = $request->validate([
+            'user_id' => ['required'],
+        ]);
+
+        $Follower = Follower::create([
+            'user_id' => $data['user_id'],
+            'follower_id' => Auth::id(),
+        ]);
+        return back();
+    }
+  
 }

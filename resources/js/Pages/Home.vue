@@ -10,6 +10,7 @@ import { defineProps, ref } from "vue";
 defineProps({
   posts: Object,
   groups: Object,
+  followers: Object,
 });
 
 

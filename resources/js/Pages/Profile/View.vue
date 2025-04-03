@@ -6,12 +6,14 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { computed, ref } from "vue";
 import { useForm } from "@inertiajs/vue3";
+import axiosClient from "../../axiosClient"
 import PostList from "@/Components/app/PostList.vue";
 
 const imagesForm = useForm({
   avatar: null,
   cover: null,
 });
+
 
 const authUser = usePage().props.auth.user;
 let showNotification = ref(true);
@@ -82,6 +84,22 @@ function submitCoverImage() {
   setTimeout(() => {
     showNotification.value = false;
   }, 3000);
+}
+
+function followUser(user)
+{
+
+
+
+axiosClient.post(route('user.follow'),{
+  user_id: user.id
+
+}).then(response => {
+  console.log(authUser);
+}).catch(error => {
+
+console.log(authUser);
+});
 }
 </script>
 
@@ -162,7 +180,14 @@ function submitCoverImage() {
 
                 Edit Profile
               </PrimaryButton>
+           
             </a>
+
+               
+            <div>
+                <button @click="followUser(user)" class="bg-blue-600 text-sm px-2 py-1 text-white rounded-md hover:bg-blue-500 hover:text-neutral-100">Follow</button>
+                
+              </div>
           </div>
         </div>
       </div>

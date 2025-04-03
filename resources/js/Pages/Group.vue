@@ -7,29 +7,31 @@ import axiosClient from "../axiosClient"
 import { CubeIcon } from "@heroicons/vue/24/outline";
 
 const authUser = usePage().props.auth.user;
-
-const imagesForm = useForm({
-    avatar: null,
-    cover: null,
-});
-
-const isEditing = computed(() => {
-    return coverImageSrc.value || avatarImageSrc.value;
-})
-const coverImageSrc = ref();
-const avatarImageSrc = ref();
-const showNotification = ref(true);
-
 const props = defineProps({
     errors: Object,
     group: Object,
     status: String,
 })
 
+const imagesForm = useForm({
+    avatar: null,
+    cover: null,
+});
+
+const coverImageSrc = ref();
+const avatarImageSrc = ref();
+const showNotification = ref(true);
+const groupUsers = ref([]);
+
+const isEditing = computed(() => {
+    return coverImageSrc.value || avatarImageSrc.value;
+})
+
 const isInGroup = computed(() => {
     return props.group.users.some(c => c.user_id == authUser.id);
 });
-const groupUsers = ref([]);
+
+
 function joinGroup() {
     axiosClient.post(route('group.join', props.group.id))
         .then(response => {
@@ -39,6 +41,7 @@ function joinGroup() {
             console.error('Error joining the group:', error.response.data.message);
         });
 }
+
 function leaveGroup() {
     axiosClient.delete(route('group.leave', props.group.id))
         .then(response => {
@@ -58,8 +61,6 @@ function fetchUsers() {
     axiosClient.get(route('group.users', props.group))
         .then(response => {
             groupUsers.value = response.data.data;
-            console.log(groupUsers);
-
         })
         .catch(error => {
             console.error(error.response.data.message);
@@ -67,16 +68,7 @@ function fetchUsers() {
         })
 }
 
-function onCoverChange(event) {
-    imagesForm.cover = event.target.files[0];
-    if (imagesForm.cover) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            coverImageSrc.value = reader.result;
-        };
-        reader.readAsDataURL(imagesForm.cover);
-    }
-}
+
 function cancelEdit() {
     imagesForm.cover = null;
     imagesForm.avatar = null;
@@ -96,7 +88,16 @@ function saveEdit() {
 
 
 
-
+function onCoverChange(event) {
+    imagesForm.cover = event.target.files[0];
+    if (imagesForm.cover) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            coverImageSrc.value = reader.result;
+        };
+        reader.readAsDataURL(imagesForm.cover);
+    }
+}
 
 function onAvatarChange(event) {
     imagesForm.avatar = event.target.files[0];
@@ -112,7 +113,7 @@ function onAvatarChange(event) {
 <template>
 
     <AuthenticatedLayout>
-  
+
         <div class="mx-12 mt-5">
             <TabGroup>
 

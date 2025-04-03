@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/{group}/users', [GroupController::class, 'getUsers'])->name('group.users');
     Route::post('group/update-cover/{group}', [GroupController::class, 'saveImage'])->name('group.cover.save');
     Route::post('group/update-avatar/{group}', [GroupController::class, 'saveImage'])->name('group.avatar.save');
+    Route::post('/follow', [ProfileController::class, 'followUser'])->name('user.follow');
 
    
 });
