@@ -106,16 +106,25 @@ class ProfileController extends Controller
     
             return redirect()->route('profile', [$user])->with('status', 'Profile updated');
     }
-  public function followUser(Request $request)
+  public function followUser(Request $request, Follower $follower)
     {
         $data = $request->validate([
             'user_id' => ['required'],
         ]);
+        $user = $request->user();
 
-        $Follower = Follower::create([
-            'user_id' => $data['user_id'],
-            'follower_id' => Auth::id(),
-        ]);
+        $alreadyFollowing = Follower::where('follower_id', Auth::id())->where('user_id', $data['user_id'])->first();
+        if($alreadyFollowing)
+        {
+          $alreadyFollowing->delete();
+        } 
+        else{
+            $Follower = Follower::create([
+                'user_id' => $data['user_id'],
+                'follower_id' => Auth::id(),
+            ]);
+        }
+        
         return back();
     }
   

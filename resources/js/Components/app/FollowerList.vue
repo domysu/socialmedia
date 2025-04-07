@@ -1,7 +1,22 @@
 <script setup>
+import { computed } from "vue";
 import FollowerItem from "./FollowerItem.vue";
 import TextInput from "/resources/js/Components/TextInput.vue";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
+import { usePage } from "@inertiajs/vue3";
+
+
+const authUser = usePage().props.auth.user;
+const props = defineProps({
+  followers: Object,
+
+});
+
+const userFollowers = computed(() => {
+  return props.followers.filter(c => c.user.id == authUser.id);
+ });
+
+
 </script>
 
 <template>
@@ -19,62 +34,10 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
         There is nothing to show here
       </div>
       <div v-else>
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Petras Grietininis"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
+        <div v-for="userfollower in userFollowers" :key="userfollower.id">
+        <FollowerItem :userfollower="userfollower"></FollowerItem>
 
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
+        </div>
       </div>
     </div>
   </div>
@@ -103,62 +66,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
         There is nothing to show here
       </div>
       <div v-else>
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Petras Grietininis"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
-        <FollowerItem
-          image="https://picsum.photos/id/200/100/100"
-          title="Paulius Jadvyga"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit"
-        />
+        <div>{{ userFollowers }}</div>
       </div>
     </div>
   </div>

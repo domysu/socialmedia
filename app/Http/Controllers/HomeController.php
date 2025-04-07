@@ -48,6 +48,7 @@ class HomeController extends Controller
         ->paginate(15);  
 
         $followers = Follower::query()
+        ->with(['user', 'follower'])
         ->latest()
         ->get();
         

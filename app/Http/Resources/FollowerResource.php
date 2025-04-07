@@ -18,8 +18,9 @@ class FollowerResource extends JsonResource
             'id' => $this->id,
             'user_id' => $this->user_id,
             'follower_id' => $this->follower_id,
+            'user' => new UserResource($this->user),
+            'follower' => new UserResource($this->follower),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
 
         ];
     }

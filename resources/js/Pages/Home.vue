@@ -27,7 +27,8 @@ defineProps({
         <GroupList :groups="groups.data"></GroupList>
       </div>
       <div class="lg:col-span-3 lg:order-3 h-full overflow-hidden">
-        <FollowerList></FollowerList>
+
+          <FollowerList :followers="followers"></FollowerList>
       </div>
       <div class="lg:col-span-6 lg:order-2 h-full overflow-auto">
         <CreatePost></CreatePost>
