@@ -7,6 +7,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { computed, ref } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import axiosClient from "../../axiosClient"
+import { PencilSquareIcon } from "@heroicons/vue/24/outline";
 import PostList from "@/Components/app/PostList.vue";
 
 const imagesForm = useForm({
@@ -22,7 +23,7 @@ const isEditingImage = computed(() => !avatarImagesrc.value && !coverImageSrc.va
 const avatarImagesrc = ref();
 const coverImageSrc = ref();
 
-defineProps({
+const props = defineProps({
   errors: Object,
 
   mustVerifyEmail: {
@@ -34,7 +35,10 @@ defineProps({
   user: {
     type: Object,
   },
-  post:{
+  post: {
+    type: Object,
+  },
+  followers: {
     type: Object,
   }
 });
@@ -86,31 +90,55 @@ function submitCoverImage() {
   }, 3000);
 }
 
-function followUser(user)
-{
+function followUser(user) {
 
 
 
-axiosClient.post(route('user.follow'),{
-  user_id: user.id
+  axiosClient.post(route('user.follow'), {
+    user_id: props.user.id
 
-}).then(response => {
-  console.log(authUser);
-}).catch(error => {
+  }).then(response => {
 
-console.log(authUser);
-});
+    if (isFollowing.value) {
+      localFollowers.value = localFollowers.value.filter(f =>
+        !(f.follower_id === authUser.id && f.user_id === props.user.id)
+      );
+    }
+    else {
+      localFollowers.value.push({
+        follower_id: authUser.id,
+        user_id: props.user.id
+      });
+    }
+
+  }).catch(error => {
+
+    console.log(authUser);
+  });
 }
+
+const localFollowers = ref([...props.followers]);
+
+const isFollowing = computed(() => {
+  return localFollowers.value.some(c => (c.follower_id == authUser.id) && (c.user_id == props.user.id));
+});
+
+const followerCount = computed(() => {
+  const count = localFollowers.value.filter(c => c.user_id === props.user.id).length;
+  return count;
+
+});
 </script>
 
 <template>
   <AuthenticatedLayout>
+
     <div class="container mx-auto h-full overflow-auto">
-      <div v-if="showNotification && status" class="bg-emerald-300 font-medium text-white p-2">
-        {{ status }}
+      <div v-if="showNotification && props.status" class="bg-emerald-300 font-medium text-white p-2">
+        {{ props.status }}
       </div>
-      <div v-if="showNotification && errors.cover" class="bg-red-400 font-300 text-white p-2">
-        {{ errors.cover }}
+      <div v-if="showNotification && props.errors.cover" class="bg-red-400 font-300 text-white p-2">
+        {{ props.errors.cover }}
       </div>
       <div class="group/cover relative">
         <img :src="coverImageSrc || user.cover_url || '/img/default_cover.jpg'" alt=""
@@ -118,7 +146,7 @@ console.log(authUser);
         <div v-if="isEditingImage">
           <button
             class="opacity-0 group-hover/cover:opacity-100 flex gap-2 absolute top-2 right-2 p-1 px-2 rounded bg-gray-200 hover:bg-gray-100 transition duration-150 ease-in-out"
-            v-if="authUser && authUser.id == user.id">
+            v-if="authUser && authUser.id == props.user.id">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
               stroke="currentColor" class="size-6">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -151,12 +179,13 @@ console.log(authUser);
         </div>
 
         <!-- Avatar -->
-        <div class="flex bg-white">
+      
+        <div class="flex bg-white relative p-2">
           <div
             class="items-center justify-center flex -mt-[64px] ml-[64px] relative group/avatar rounded-full w-[128px] h-[128px]">
             <img :src="avatarImagesrc || user.avatar_url || '/img/default_avatar.png'" alt=""
               class="h-full w-full rounded-full" @error="user.avatar_url = '/img/default_avatar.png'" />
-            <button v-if="isEditingImage && authUser && authUser.id == user.id"
+            <button v-if="isEditingImage && authUser && authUser.id == props.user.id"
               class="cursor-pointer absolute text-black flex items-center justify-center bottom-0 top-0 right-0 left-0 opacity-0 group-hover/avatar:opacity-100">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-12">
@@ -168,28 +197,24 @@ console.log(authUser);
             </button>
             <div v-else class="absolute top-2"></div>
           </div>
-          <div class="p-3 flex flex-1 justify-between items-center">
-            <h2 class="font-bold text-lg sm:mr-3">{{ user.name }}</h2>
-            <a :href="route('profile.updateIndex')">
-              <PrimaryButton v-if="authUser && authUser.id == user.id" class="gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                  stroke="currentColor" class="size-6">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                </svg>
+          <div class="p-3 flex flex-1 lg:relative items-center" >
+            <h2 class="font-bold text-lg sm:mr-3">{{ props.user.name }}</h2>
 
+            <a :href="route('profile.updateIndex')">
+              <PrimaryButton v-if="authUser && authUser.id == props.user.id" class="gap-2 lg:absolute right-1 bottom-3 ">
+                <PencilSquareIcon class="size-6"></PencilSquareIcon>
                 Edit Profile
               </PrimaryButton>
-           
             </a>
-
-               
             <div>
-                <button @click="followUser(user)" class="bg-blue-600 text-sm px-2 py-1 text-white rounded-md hover:bg-blue-500 hover:text-neutral-100">Follow</button>
-                
-              </div>
+              <button v-if="props.user.id != authUser.id" @click="followUser(user)"
+                class="bg-blue-600 text-sm px-2 py-1 text-white rounded-md hover:bg-blue-700 hover:text-neutral-100"
+                :class="isFollowing ? 'bg-blue-500' : ''">{{ isFollowing ? 'Unfollow' : 'Follow' }}</button>
+            </div>
           </div>
+        
         </div>
+        
       </div>
 
       <div>
@@ -226,15 +251,15 @@ console.log(authUser);
                 'px-6 py-2.5 outline-none text-sm',
                 selected ? 'text-blue-700 border-b border-blue-700' : 'text-black',
               ]">
-                Followers
+                {{followerCount}} Followers
               </button>
             </Tab>
           </TabList>
 
           <TabPanels class="mt-2">
             <TabPanel key="about" class="px-5"> shrek </TabPanel>
-            <TabPanel key="posts" class="px-5"> 
-             </TabPanel>
+            <TabPanel key="posts" class="px-5">
+            </TabPanel>
             <TabPanel key="following" class="px-5"> Following </TabPanel>
             <TabPanel key="followers" class="px-5"> Followers </TabPanel>
           </TabPanels>

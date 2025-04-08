@@ -14,6 +14,7 @@ use Inertia\Response;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\Follower;
+use App\Http\Resources\FollowerResource;
 
 class ProfileController extends Controller
 {
@@ -23,11 +24,18 @@ class ProfileController extends Controller
 
      public function index(User $user)
      {
+
+        $followers = Follower::query()
+        ->with(['user', 'follower'])
+        ->latest()
+        ->get();
+        
         return Inertia::render('Profile/View', [
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
             'user' => new UserResource($user),
             'post' => PostResource::collection($user->posts),
+            'followers' => FollowerResource::collection($followers),
             
         ]);
             
