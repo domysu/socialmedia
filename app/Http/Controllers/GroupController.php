@@ -173,4 +173,16 @@ class GroupController extends Controller
 
 
     }
+    public function AllGroups()
+    {
+        $groups = Group::query()
+        ->with('GroupUsers')
+        ->latest()
+        ->paginate(15); 
+        return Inertia::render('AllGroups', [
+            'groups' => GroupResource::collection($groups),
+
+        ]);
+
+    }
 }

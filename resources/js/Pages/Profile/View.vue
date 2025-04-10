@@ -184,7 +184,7 @@ const followerCount = computed(() => {
           <div
             class="items-center justify-center flex -mt-[64px] ml-[64px] relative group/avatar rounded-full w-[128px] h-[128px]">
             <img :src="avatarImagesrc || user.avatar_url || '/img/default_avatar.png'" alt=""
-              class="h-full w-full rounded-full" @error="user.avatar_url = '/img/default_avatar.png'" />
+              class="h-full w-full rounded-full object-cover" @error="user.avatar_url = '/img/default_avatar.png'" />
             <button v-if="isEditingImage && authUser && authUser.id == props.user.id"
               class="cursor-pointer absolute text-black flex items-center justify-center bottom-0 top-0 right-0 left-0 opacity-0 group-hover/avatar:opacity-100">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

@@ -107,7 +107,7 @@ function sendReaction() {
   
   <div class="border bg-white rounded p-4 mb-5">
 
-    <div class="flex gap-3 items-center relative">
+    <div class="flex items-center relative">
 
       <Menu as="div" class="inline-block text-left">
         <div>
@@ -146,12 +146,14 @@ function sendReaction() {
 
         <PostModal :post="props.post" v-model="isEditModalOpen"></PostModal>
       </Menu>
+
+      <div class="flex">
       <a href="#" @click="ToProfile()" class="rounded-full">
         <img :src="post.user.avatar_url || '/img/default_avatar.png'"
           @error="post.user.avatar_url = '/img/default_avatar.png'"
-          class="w-[52px] h-[52px] rounded-full border-2 hover:border-blue-400" />
+          class="w-[52px] h-[52px] rounded-full border-2 hover:border-blue-400 object-cover" />
       </a>
-      <div class="">
+      <div class="ml-2">
         <h4 class="font-bold">
           <a href="#" @click="ToProfile()" class="hover:underline">{{ post.user.name }}
           </a>
@@ -168,6 +170,7 @@ function sendReaction() {
         <PostModal :post="post" v-if="authUser && authUser.id == post.user.id"></PostModal>
       </div>
     </div>
+  </div>
 
     <Disclosure v-slot="{ open }">
       <div v-if="!open" class="mt-2" v-html="post.body.substring(0, 200)"></div>
@@ -191,7 +194,7 @@ function sendReaction() {
         <ImagePreview :attachment="selectedAttachment" v-if="showAttachment" @close="showAttachment = false"
           @next="nextAttachment" @prev="previousAttachment"></ImagePreview>
 
-        <img v-if="isImage(attachment)" :src="attachment.url" class="cursor-pointer aspect-square"
+        <img v-if="isImage(attachment)" :src="attachment.url" class="cursor-pointer object-cover"
           @click="previewAttachment(attachment)" />
 
         <div v-else class=" aspect-square bg-gray-200 flex flex-col justify-center items-center cursor-pointer" @click="previewAttachment(attachment)">

@@ -41,6 +41,12 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Main Page
                                 </NavLink>
+                                <NavLink
+                                    :href="route('group.allGroups')"
+                                    
+                                >
+                                    Groups
+                                </NavLink>
                             </div>
                         </div>
 

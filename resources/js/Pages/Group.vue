@@ -129,7 +129,7 @@ function onAvatarChange(event) {
                 <div class="bg-white rounded shadow-lg">
 
                     <div class="relative group/cover">
-                        <img class="w-full h-40 rounded relative"
+                        <img class="w-full h-40 rounded relative object-cover"
                             @error="props.group.cover_path = 'https://picsum.photos/2000/300'"
                             :src="coverImageSrc || props.group.cover_path || 'https://picsum.photos/2000/300'"></img>
                         <div v-if="isEditing" class="absolute right-2 top-2">
