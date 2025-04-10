@@ -16,6 +16,7 @@ groups: Object,
     class="w-[64px] h-[64px] rounded-full object-cover"
     >
     <p class="font-bold ml-2">{{group.name}}</p>
+    
      </div>
     </div>
     </AuthenticatedLayout>
