@@ -59,7 +59,8 @@ const groupArray = props.groups.filter(group =>
         <h2 class="text-2xl font-bold">Groups</h2>
         <div>
 
-          <button @click="isGroupCreateModalOpen = true" class="bg-cyan-500 hover:bg-cyan-300 hover p-2 text-sm rounded-md opacity-0 group-hover/list:opacity-100"> Create group
+          <button @click="isGroupCreateModalOpen = true" class="bg-cyan-500 hover:bg-cyan-300 hover p-2 text-sm rounded-md opacity-0 group-hover/list:opacity-100 text-white"> 
+          Create group
           </button>
 
         </div>

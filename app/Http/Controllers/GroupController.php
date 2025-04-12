@@ -10,6 +10,7 @@ use App\Models\Group;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\GroupUser;
 use App\Models\User;
 
@@ -85,7 +86,13 @@ class GroupController extends Controller
      */
     public function update(UpdateGroupRequest $request, Group $group)
     {
-        //
+        $data = $request->validate([
+                'name' => ['required'],
+                'about' => ['required'],
+        ]);
+        $group->update($data);
+    
+
     }
 
     /**

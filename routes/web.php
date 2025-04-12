@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::post('group/update-avatar/{group}', [GroupController::class, 'saveImage'])->name('group.avatar.save');
     Route::post('/follow', [ProfileController::class, 'followUser'])->name('user.follow');
     Route::get('/groups', [GroupController::class, 'AllGroups'])->name('group.allGroups');
+    Route::put('/group/{group}', [GroupController::class, 'update'])->name('group.update');
 });
 
 
