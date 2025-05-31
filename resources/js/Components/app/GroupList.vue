@@ -45,20 +45,20 @@ const groupArray = props.groups.filter(group =>
             </div>
             <div v-else>
 
-              <GroupItem v-for="group of groupArray" :key="group.id" :group="group"></GroupItem>
+              <GroupItem v-for="group of props.groups" :key="group.id" :group="group"></GroupItem>
             </div>
           </div>
         </div>
       </DisclosurePanel>
     </Disclosure>
   </div>
-
+  
   <div class="lg:block hidden h-full group/list">
     <div class="border bg-white p-3 h-full flex flex-col ">
       <div class="justify-between flex items-center p-2">
         <h2 class="text-2xl font-bold">Groups</h2>
         <div>
-
+         
           <button @click="isGroupCreateModalOpen = true" class="bg-cyan-500 hover:bg-cyan-300 hover p-2 text-sm rounded-md opacity-0 group-hover/list:opacity-100 text-white"> 
           Create group
           </button>

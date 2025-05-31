@@ -23,6 +23,7 @@ const imagesForm = useForm({
     cover: null,
 });
 
+
 const coverImageSrc = ref();
 const avatarImageSrc = ref();
 const showNotification = ref(true);
@@ -33,9 +34,13 @@ const isEditing = computed(() => {
     return coverImageSrc.value || avatarImageSrc.value;
 })
 
+
 const isInGroup = computed(() => {
     return props.group.users.some(c => c.user_id == authUser.id);
 });
+const modId = computed(() => {
+    return props.group.user_id;
+})
 
 
 function joinGroup() {
@@ -86,19 +91,26 @@ function saveEdit() {
         imagesForm.post(route('group.avatar.save', props.group));
 
     cancelEdit();
-    setTimeout(() => {
-        showNotification.value = false;
-    }, 3000);
-
+    timeOut();
 }
 function saveGroupEdit(){
     groupEditForm.put(route('group.update', props.group), {
         onSuccess: () => {
             isInGroupEdit.value = false;
         },
+        onError: () => {
+            timeOut();
+        }
     
 
     });
+
+}
+function timeOut()
+{
+    setTimeout(() => {
+        showNotification.value = false;
+    }, 10000);
 
 }
 
@@ -139,9 +151,9 @@ function onAvatarChange(event) {
                     {{ status }}
                 </div>
 
-                <div v-if="(props.errors.cover || props.errors.avatar) && showNotification"
-                    class="bg-red-400 p-1 opacity-80 text-center align-center mb-1">
-                    {{ props.errors.cover || props.errors.avatar }}
+                <div v-if="(props.errors.cover || props.errors.avatar || props.errors.name || props.errors.about) && showNotification"
+                    class="bg-red-400 p-1 opacity-80 text-center align-center mb-1 text-white">
+                    {{ props.errors.cover || props.errors.avatar || props.errors.name || props.errors.about }}
                 </div>
                 <div class="bg-white rounded shadow-lg">
 
@@ -184,7 +196,7 @@ function onAvatarChange(event) {
 
                             </div>
                         </div>
-                        <div v-else>
+                        <div v-if="isInGroupEdit">
                             <input class="mb-1 font-black border-none" type="text"
                                 :placeholder="props.group.name" v-model="groupEditForm.name">
                               
@@ -195,7 +207,7 @@ function onAvatarChange(event) {
 
                         </div>
                         <div class="absolute right-2 top-2">
-                            <Menu as="div" class="relative inline-block text-left" v-if="!isInGroupEdit">
+                            <Menu as="div" class="relative inline-block text-left" v-if="!isInGroupEdit && authUser.id == modId">
                                 <div>
                                     <MenuButton class="">
                                         <EllipsisVerticalIcon class="size-7"></EllipsisVerticalIcon>
@@ -223,8 +235,8 @@ function onAvatarChange(event) {
                                     </MenuItems>
                                 </transition>
                             </Menu>
-                            <div v-else>
-                                <button @click="saveGroupEdit" class="bg-emerald-300 hover:bg-emerald-400 p-2">Update</button>
+                            <div v-if="isInGroupEdit">
+                                <button @click="saveGroupEdit" class="bg-emerald-500 hover:bg-emerald-400 p-2 mr-2 rounded-sm text-white">Update</button>
                                 <button class="p-2 bg-red-500 rounded-sm text-white hover:bg-red-600 hover:font-medium"
                                     @click="isInGroupEdit = !isInGroupEdit"> Cancel </button>
                                 
@@ -277,13 +289,16 @@ function onAvatarChange(event) {
                     <TabPanel>
                         <div class="grid lg:grid-cols-3 gap-4">
                             <div v-for="user of groupUsers">
-                                <div class="rounded-md shadow-xl bg-slate-50 p-4 mt-2 hover:shadow-2xl">
+                                <div class="rounded-md shadow-xl bg-slate-50 p-4 mt-2 hover:shadow-2xl relative">
                                     <div class="flex items-center">
                                         <img :src="'/storage/' + user.avatar_path"
                                             @error="user.avatar_path = 'img/default_avatar.png'" alt="avatar"
                                             class="h-[52px] w-[52px] object-cover rounded-full">
                                         <b @click="toProfile(user)" class="ml-2 cursor-pointer hover:underline">{{
                                             user.name }}</b>
+                                        <div class="absolute right-2 top-1" v-if="modId === user.id">
+                                         <b class="text-green-700"> Moderator </b>
+                                        </div>
 
                                     </div>
 

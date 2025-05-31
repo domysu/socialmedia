@@ -86,10 +86,7 @@ class GroupController extends Controller
      */
     public function update(UpdateGroupRequest $request, Group $group)
     {
-        $data = $request->validate([
-                'name' => ['required'],
-                'about' => ['required'],
-        ]);
+        $data = $request->validated();
         $group->update($data);
     
 

@@ -46,9 +46,10 @@ class HomeController extends Controller
         ->with('GroupUsers')
         ->latest()
         ->paginate(15);  
-
+        
         $followers = Follower::query()
-        ->with(['user', 'follower'])
+        ->where('user_id', $userId)
+        ->with('follower')
         ->latest()
         ->get();
         

@@ -8,6 +8,7 @@ import { computed, ref } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import axiosClient from "../../axiosClient"
 import { PencilSquareIcon } from "@heroicons/vue/24/outline";
+import UserProfileFollowerItem from "@/Components/UserProfileFollowerItem.vue";
 import PostList from "@/Components/app/PostList.vue";
 
 const imagesForm = useForm({
@@ -32,8 +33,8 @@ const props = defineProps({
   status: {
     type: String,
   },
-  user: {
-    type: Object,
+    user: {
+      type: Object,
   },
   post: {
     type: Object,
@@ -261,7 +262,7 @@ const followerCount = computed(() => {
             <TabPanel key="posts" class="px-5">
             </TabPanel>
             <TabPanel key="following" class="px-5"> Following </TabPanel>
-            <TabPanel key="followers" class="px-5"> Followers </TabPanel>
+            <TabPanel key="followers" class="px-5"> <UserProfileFollowerItem v-for="follower of props.followers" :follower="follower"></UserProfileFollowerItem> </TabPanel>
           </TabPanels>
         </TabGroup>
       </div>

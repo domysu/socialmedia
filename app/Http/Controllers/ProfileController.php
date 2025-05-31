@@ -24,9 +24,11 @@ class ProfileController extends Controller
 
      public function index(User $user)
      {
+        
 
         $followers = Follower::query()
-        ->with(['user', 'follower'])
+        ->where('user_id', $user->id)
+        ->with('follower')
         ->latest()
         ->get();
         

@@ -34,7 +34,7 @@ const userFollowers = computed(() => {
         There is nothing to show here
       </div>
       <div v-else>
-        <div v-for="userfollower in userFollowers" :key="userfollower.id">
+        <div v-for="userfollower in props.followers" >
         <FollowerItem :userfollower="userfollower"></FollowerItem>
 
         </div>
