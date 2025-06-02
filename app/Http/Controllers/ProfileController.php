@@ -14,6 +14,7 @@ use Inertia\Response;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\Follower;
+use App\Models\Post;
 use App\Http\Resources\FollowerResource;
 
 class ProfileController extends Controller
@@ -25,19 +26,38 @@ class ProfileController extends Controller
      public function index(User $user)
      {
         
-
+        
         $followers = Follower::query()
         ->where('user_id', $user->id)
         ->with('follower')
         ->latest()
-        ->get();
-        
+        ->paginate(10);
+
+         $followings = Follower::query()
+        ->where('follower_id', $user->id)
+        ->with('user')
+        ->latest()
+        ->paginate(10);
+
+        $userPosts = Post::query()->where('user_id', $user->id)->withCount('reactions')
+        ->latest()
+        ->paginate(3);
+
+        $userPosts = PostResource::collection($userPosts);
+        if(request()->wantsJson())
+        {
+         
+            return $userPosts;
+            
+        }
+
         return Inertia::render('Profile/View', [
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
             'user' => new UserResource($user),
-            'post' => PostResource::collection($user->posts),
+            'posts' => $userPosts,
             'followers' => FollowerResource::collection($followers),
+            'followings' => FollowerResource::collection($followings),
             
         ]);
             
@@ -61,10 +81,10 @@ class ProfileController extends Controller
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
-
+       
         $request->user()->save();
 
-        return Redirect::route('profile');
+        return Redirect::route('profile.updateIndex');
     }
 
     /**
@@ -135,7 +155,11 @@ class ProfileController extends Controller
             ]);
         }
         
-        return back();
+        return response([
+            
+            'follower' => new UserResource(Auth::user()),
+        
+        ]);
     }
   
 }

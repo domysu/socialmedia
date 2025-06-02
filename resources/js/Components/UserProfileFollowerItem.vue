@@ -1,5 +1,6 @@
-<script setup>
 
+<script setup>
+import FollowerItem from './app/FollowerItem.vue';
 
 const props = defineProps({
     follower: Object
@@ -7,7 +8,8 @@ const props = defineProps({
 </script>
 <template lang="">
     <div>
-        {{follower.follower.name}}
+    
+       <FollowerItem :userfollower="follower"></FollowerItem>
     </div>
 </template>
 

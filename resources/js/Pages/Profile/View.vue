@@ -10,6 +10,7 @@ import axiosClient from "../../axiosClient"
 import { PencilSquareIcon } from "@heroicons/vue/24/outline";
 import UserProfileFollowerItem from "@/Components/UserProfileFollowerItem.vue";
 import PostList from "@/Components/app/PostList.vue";
+import UserProfileFollowingItem from "@/Components/UserProfileFollowingItem.vue";
 
 const imagesForm = useForm({
   avatar: null,
@@ -36,10 +37,13 @@ const props = defineProps({
     user: {
       type: Object,
   },
-  post: {
+  posts: {
     type: Object,
   },
   followers: {
+    type: Object,
+  },
+  followings: {
     type: Object,
   }
 });
@@ -70,8 +74,7 @@ function onCoverChange(event) {
     reader.readAsDataURL(imagesForm.cover);
   }
 }
-function cancelCoverImage() {
-  imagesForm.cover = null;
+function cancelCoverImage() {  imagesForm.cover = null;
   coverImageSrc.value = null;
 
   avatarImagesrc.value = null;
@@ -99,42 +102,41 @@ function followUser(user) {
     user_id: props.user.id
 
   }).then(response => {
-
+    
     if (isFollowing.value) {
       localFollowers.value = localFollowers.value.filter(f =>
         !(f.follower_id === authUser.id && f.user_id === props.user.id)
       );
     }
     else {
-      localFollowers.value.push({
-        follower_id: authUser.id,
-        user_id: props.user.id
-      });
+     localFollowers.value.push({
+    follower_id: authUser.id,
+    user_id: props.user.id,
+    follower: response.data.follower
+    });
+    console.log(localFollowers);
     }
 
   }).catch(error => {
 
-    console.log(authUser);
+    console.log(error);
   });
 }
 
-const localFollowers = ref([...props.followers]);
-
+const localFollowers = ref([...props.followers.data]);
 const isFollowing = computed(() => {
-  return localFollowers.value.some(c => (c.follower_id == authUser.id) && (c.user_id == props.user.id));
+  return localFollowers.value.some(f =>
+    f.follower_id === authUser.id && f.user_id === props.user.id
+  );
 });
 
-const followerCount = computed(() => {
-  const count = localFollowers.value.filter(c => c.user_id === props.user.id).length;
-  return count;
-
-});
+const followerCount = computed(() => localFollowers.value.length);
 </script>
 
 <template>
   <AuthenticatedLayout>
 
-    <div class="container mx-auto h-full overflow-auto">
+    <div class="container mx-auto h-full overflow-none">
       <div v-if="showNotification && props.status" class="bg-emerald-300 font-medium text-white p-2">
         {{ props.status }}
       </div>
@@ -244,7 +246,7 @@ const followerCount = computed(() => {
                 'px-6 py-2.5 outline-none text-sm',
                 selected ? 'text-blue-700 border-b border-blue-700' : 'text-black',
               ]">
-                Followings
+               {{props.followings.data.length}} Followings
               </button>
             </Tab>
             <Tab key="followers" v-slot="{ selected }">
@@ -258,11 +260,11 @@ const followerCount = computed(() => {
           </TabList>
 
           <TabPanels class="mt-2">
-            <TabPanel key="about" class="px-5"> shrek </TabPanel>
-            <TabPanel key="posts" class="px-5">
-            </TabPanel>
-            <TabPanel key="following" class="px-5"> Following </TabPanel>
-            <TabPanel key="followers" class="px-5"> <UserProfileFollowerItem v-for="follower of props.followers" :follower="follower"></UserProfileFollowerItem> </TabPanel>
+            <TabPanel key="about" class="px-5" v-html="props.user.about">  </TabPanel>
+            <TabPanel key="posts" class="px-5"> <PostList :posts="posts.data"></PostList> </TabPanel>
+            <TabPanel key="following" class="px-5"> <UserProfileFollowingItem v-for="following of props.followings.data" :following="following"></UserProfileFollowingItem> </TabPanel>
+            <TabPanel key="followers" class="px-5"> <UserProfileFollowerItem v-for="follower of localFollowers" 
+                                                                            :follower="follower"></UserProfileFollowerItem> </TabPanel>
           </TabPanels>
         </TabGroup>
       </div>

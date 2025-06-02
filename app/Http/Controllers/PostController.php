@@ -225,9 +225,9 @@ class PostController extends Controller
         {
             
             $comment->delete();
-            return response('', 204);
+            return response()->json('Succesfully deleted', 204);
         }
-        else return response()->json(['error' => 'Forbidden'], 403);
+        return response()->json(['error' => 'Forbidden'], 403);
 
         
     }

@@ -30,8 +30,6 @@ class HomeController extends Controller
             $query->where('user_id', $userId);
 
         },
-      
-
        ])
        ->latest()
        ->paginate(3);
@@ -51,7 +49,7 @@ class HomeController extends Controller
         ->where('user_id', $userId)
         ->with('follower')
         ->latest()
-        ->get();
+        ->paginate(10);
         
         return Inertia::render('Home', [
             

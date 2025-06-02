@@ -19,7 +19,10 @@ Route::get('/groups', [GroupController::class, 'index'])
 Route::get('/u/{user:username}', [ProfileController::class, 'index'])->name('profile');
 
 
-Route::middleware('auth')->group(function () {
+    Route::middleware('auth')->group(function () {
+
+    Route::patch('profile/user-edit', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/edit', [ProfileController::class, 'edit_index'])->name('profile.updateIndex');
 
     Route::post('/profile/update-cover', [ProfileController::class, 'updateImage'])
         ->name('profile.updateCover');
@@ -32,8 +35,7 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/posts/{post}', [PostController::class,  'destroy'])->name('post.delete');
 
-    Route::get('/edit', [ProfileController::class, 'edit_index'])
-        ->name('profile.updateIndex');
+    
 
     Route::put('/posts/{post}', [PostController::class,'update'])->name('post.update');
     Route::post('/posts/{post}/like', [PostController::class, 'postReaction'])->name('post.reaction');
