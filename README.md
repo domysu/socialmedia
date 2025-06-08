@@ -8,8 +8,11 @@ Features include user authentication, group-based interaction, posting, commenti
 ## Technologies Used
 
 Backend: PHP (Laravel), Docker, Ubuntu
+
 Frontend: Vue 3, Tailwind CSS
+
 Database: MySQL
+
 Auth: Laravel Breeze
 
 
