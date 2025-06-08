@@ -35,5 +35,9 @@ class Group extends Model
             ->usingSeparator('-')
             ->doNotGenerateSlugsOnUpdate();
     }
+    public function getIsAdminAttribute()
+    {
+        return $this->user_id === auth()->id();
+    }
 
 }

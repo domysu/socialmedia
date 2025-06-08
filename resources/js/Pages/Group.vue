@@ -5,12 +5,15 @@ import { defineProps, ref, computed } from "vue";
 import { usePage, router, useForm } from "@inertiajs/vue3";
 import axiosClient from "../axiosClient"
 import { CubeIcon, EllipsisVerticalIcon } from "@heroicons/vue/24/outline";
+import InviteUserModal from "@/Components/InviteUserModal.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 const authUser = usePage().props.auth.user;
 const props = defineProps({
     errors: Object,
     group: Object,
     status: String,
+    isInGroup: Boolean,
 })
 
 
@@ -29,15 +32,13 @@ const avatarImageSrc = ref();
 const showNotification = ref(true);
 const groupUsers = ref([]);
 const isInGroupEdit = ref(false);
+const isInInviteModal = ref(false);
 
 const isEditing = computed(() => {
     return coverImageSrc.value || avatarImageSrc.value;
 })
 
 
-const isInGroup = computed(() => {
-    return props.group.users.some(c => c.user_id == authUser.id);
-});
 const modId = computed(() => {
     return props.group.user_id;
 })
@@ -143,7 +144,9 @@ function onAvatarChange(event) {
 
     <AuthenticatedLayout>
 
-        <div class="mx-12 mt-5">
+        <div class="mx-12 mt-5">    
+
+        
             <TabGroup>
 
                 <div v-if="props.status && showNotification"
@@ -206,9 +209,11 @@ function onAvatarChange(event) {
                             </div>
 
                         </div>
-                        <div class="absolute right-2 top-2">
-                            <Menu as="div" class="relative inline-block text-left" v-if="!isInGroupEdit && authUser.id == modId">
-                                <div>
+                        <div class="absolute right-2 top-2 ">
+                            <Menu as="div" class="relative  inline-block text-left" v-if="!isInGroupEdit && authUser.id == modId">
+                                <div class="items-center flex gap-3">
+                                <PrimaryButton @click="isInInviteModal = true">Invite</PrimaryButton>
+                                <InviteUserModal :group="props.group" v-model="isInInviteModal"></InviteUserModal>
                                     <MenuButton class="">
                                         <EllipsisVerticalIcon class="size-7"></EllipsisVerticalIcon>
                                     </MenuButton>
@@ -244,7 +249,7 @@ function onAvatarChange(event) {
                         </div>
                     </div>
                     <div class="flex p-2 gap-2 justify-between">
-                        <div class="flex gap-2" v-if="isInGroup">
+                        <div class="flex gap-2" v-if="props.isInGroup">
 
                             <TabList>
                                 <Tab key="users" v-slot="{ selected }">
@@ -275,14 +280,14 @@ function onAvatarChange(event) {
 
                         <div>
                             <button class="bg-emerald-300 hover:bg-emerald-400 p-2" @click="joinGroup"
-                                v-if="!isInGroup">Join</button>
+                                v-if="!props.isInGroup">Join</button>
                             <button class="bg-red-500 hover:bg-red-600 p-2 text-white rounded-sm" @click="leaveGroup"
-                                v-if="isInGroup">Leave</button>
+                                v-if="props.isInGroup">Leave</button>
                         </div>
 
                     </div>
                 </div>
-                <TabPanels class="mt-5" v-if="isInGroup">
+                <TabPanels class="mt-5" v-if="props.isInGroup">
                     <TabPanel>
                         Group posts goes here...
                     </TabPanel>

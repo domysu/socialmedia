@@ -9,7 +9,7 @@ class GroupUser extends Model
 {
     const UPDATED_AT = NULL;
     const CREATED_BY = NULL;
-    protected $fillable = ['role', 'status', 'user_id', 'group_id','created_by'];
+    protected $fillable = ['role', 'status', 'user_id', 'group_id','created_by','token','token_expire_date', 'token_used'];
 
     public function user(): BelongsTo
     {

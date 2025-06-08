@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\GroupUser;
 use App\Models\User;
+use App\Http\Enums\GroupUserStatus;
+use App\Http\Enums\GroupUserRole;
+use App\Http\Requests\InviteUserRequest;
+use App\Notifications\GroupInviteNotification;
+use Illuminate\Support\Carbon;
 
 
 
@@ -23,9 +28,17 @@ class GroupController extends Controller
      */
     public function index(Group $group)
     {
+
+        $isInGroup = $group->groupUsers()
+        ->where('user_id', auth()->id())
+        ->where('status', GroupUserStatus::APPROVED)
+        ->exists();
+
        return Inertia::render('Group', [
         'group' => new GroupResource($group),
-        'status' => session('status')
+        'status' => session('status'),
+        'isInGroup' => $isInGroup
+
 
 
        ]);
@@ -53,10 +66,11 @@ class GroupController extends Controller
 
         ]);
         $GroupUser = GroupUser::create([
-            'status' => 'Approved',
+            'status' => GroupUserStatus::APPROVED,
+            
             'user_id' => Auth::id(),
             'group_id' => $group->id,
-            'role' => 'User',
+            'role' => GroupUserRole::ADMIN,
             'created_by' => Auth::id(),
 
         ]);
@@ -119,6 +133,62 @@ class GroupController extends Controller
         ]);
     }   
 
+    public function inviteUser(Group $group, InviteUserRequest $request)
+    {
+            
+            $data = $request->validated();
+            $identifier = $request->input('identifier');
+            $user = filter_var($identifier, FILTER_VALIDATE_EMAIL)
+            ? User::where('email', $identifier)->first()
+            : User::where('username', $identifier)->first();
+
+            if($user == null)
+            {
+             return back()->withErrors(['identifier' => 'User not found.']);
+            }
+
+            $userInGroup = $group->GroupUsers->firstWhere('user_id', $user->id);
+            if($userInGroup != null && $userInGroup->status == 'pending')
+            {
+                $userInGroup->delete();
+
+            }
+            else if($userInGroup != null && $userInGroup->status != 'pending'){
+                return back()->withErrors(['identifier' => 'User is already in group']);
+            }
+
+            $groupUser = GroupUser::create([
+            'status' => GroupUserStatus::PENDING,
+            'user_id' => $user->id,
+            'token' => bin2hex(random_bytes(16)),
+            'token_expire_date' => Carbon::now()->addHours(24),
+            'group_id' => $group->id,
+            'role' => GroupUserRole::USER,
+            'created_by' => Auth::id(),
+
+        ]);
+        $user->notify(new GroupInviteNotification($group, $groupUser));
+        return back()->with('message', 'User invited');
+
+    }
+
+    public function accept($token)
+    {
+        $groupUser = GroupUser::Where('token', $token)->where('token_expire_date', '>', Carbon::now())->where('token_used', null)->first();
+        if(! $groupUser)
+        {
+            return Inertia::Render('Error',[
+                'body' => 'Token is invalid or expired! ',
+            ]);
+        }
+        $groupUser->update([
+            'status' => GroupUserStatus::APPROVED,
+            'token_used' => Carbon::now(),
+        ]);
+        return Inertia::render('Success', [
+            'body' => "Succesfully joined the group",
+        ]);
+    }
     public function leaveGroup(Group $group)
     {
         $user = auth()->user();
@@ -147,7 +217,8 @@ class GroupController extends Controller
         {
             $query->select('user_id')
                 ->from('group_users')
-                ->where('group_id', $group->id);
+                ->where('group_id', $group->id)
+                ->where('status', GroupUserStatus::APPROVED);
         })->paginate(20);
         return $allUsers;
 

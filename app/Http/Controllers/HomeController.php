@@ -11,6 +11,7 @@ use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Group;
 use App\Models\Follower;
+use App\Http\Enums\GroupUserStatus;
 
 class HomeController extends Controller
 {
@@ -41,8 +42,10 @@ class HomeController extends Controller
         }
 
         $groups = Group::query()
-        ->with('GroupUsers')
-        ->latest()
+        ->join('group_users AS gu', 'gu.group_id', 'groups.id')
+        ->where('gu.user_id', $userId)
+        ->where('gu.status', GroupUserStatus::APPROVED)
+        ->orderBy('groups.created_at', 'desc')
         ->paginate(15);  
         
         $followers = Follower::query()

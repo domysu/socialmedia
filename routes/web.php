@@ -15,7 +15,7 @@ Route::get('/groups', [GroupController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('groups');
 
 
-
+ Route::get('/group-invite/{token}', [GroupController::class,'accept'])->name('group.accept');
 Route::get('/u/{user:username}', [ProfileController::class, 'index'])->name('profile');
 
 
@@ -51,8 +51,11 @@ Route::get('/u/{user:username}', [ProfileController::class, 'index'])->name('pro
     Route::post('group/update-cover/{group}', [GroupController::class, 'saveImage'])->name('group.cover.save');
     Route::post('group/update-avatar/{group}', [GroupController::class, 'saveImage'])->name('group.avatar.save');
     Route::post('/follow', [ProfileController::class, 'followUser'])->name('user.follow');
+    Route::post('/groups/{group}/invite', [GroupController::class, 'inviteUser'])->name('group.invite');
     Route::get('/groups', [GroupController::class, 'AllGroups'])->name('group.allGroups');
     Route::put('/group/{group}', [GroupController::class, 'update'])->name('group.update');
+   
+   
 });
 
 

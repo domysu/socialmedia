@@ -16,9 +16,7 @@ const props = defineProps({
   groups: Array,
 
 });
-const groupArray = props.groups.filter(group =>
-  group.users.some(c => c.user_id === authUser.id)
-);
+
 
 </script>
 
@@ -72,8 +70,8 @@ const groupArray = props.groups.filter(group =>
           You have not joined any groups yet
         </div>
         <div v-else>
-
-          <GroupItem v-for="group of groupArray" :key="group.id" :group="group"></GroupItem>
+      
+          <GroupItem v-for="group of props.groups" :key="group.id" :group="group"></GroupItem>
         </div>
       </div>
     </div>
