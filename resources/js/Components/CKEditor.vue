@@ -2,8 +2,8 @@
   <div>
     <ckeditor
       :editor="editor"
-      :model-value="modelValue"
       @input="onEditorChange"
+      v-model="props.post.body"
       :config="editorConfig"
     />
   </div>
@@ -26,6 +26,14 @@ import "ckeditor5/ckeditor5.css";
 
 const emit = defineEmits(["update:modelValue"]);
 
+const props = defineProps({
+
+    post: {
+      type: Object,
+      default: () => ({ body: "" }),
+    },
+    
+})
 
 
 const editor = ClassicEditor;

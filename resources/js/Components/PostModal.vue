@@ -201,7 +201,7 @@ async function readFile(file) {
 
 
                 <div class="mt-2">
-                  <CKEditor v-model="props.post.body"></CKEditor>
+                  <CKEditor :post="props.post" v-model="props.post.body"></CKEditor>
                 </div>
                 <div v-if="computedInvalidExtensions"
                   class="mt-2 bg-amber-100 p-3 border-l-4  border-amber-200 text-amber-800">
