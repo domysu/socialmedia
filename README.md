@@ -2,15 +2,15 @@
 
 ## Project Overview
 
-This project is a social media website currently under development. It serves as a learning experience in using PHP Laravel, inertia vue3
+A full-stack social media platform built with Laravel (PHP) and Vue 3.  
+Features include user authentication, group-based interaction, posting, commenting, and more.
 
 ## Technologies Used
 
-- **PHP Laravel**
-- **Inertia vue3**
-- **Tailwind CSS**
-- **Docker**
-- **Ubuntu** 
+Backend: PHP (Laravel), Docker, Ubuntu
+Frontend: Vue 3, Tailwind CSS
+Database: MySQL
+Auth: Laravel Breeze
 
 
 ## Installation with docker
