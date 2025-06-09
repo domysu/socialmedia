@@ -18,8 +18,7 @@ use App\Http\Enums\GroupUserRole;
 use App\Http\Requests\InviteUserRequest;
 use App\Notifications\GroupInviteNotification;
 use Illuminate\Support\Carbon;
-
-
+use Illuminate\Support\Facades\Redirect;
 
 class GroupController extends Controller
 {
@@ -92,7 +91,9 @@ class GroupController extends Controller
      */
     public function edit(Group $group)
     {
-        //
+       return Inertia::Render('Group/Edit',[
+            'group' => $group,
+        ]);
     }
 
     /**
@@ -101,6 +102,13 @@ class GroupController extends Controller
     public function update(UpdateGroupRequest $request, Group $group)
     {
         $data = $request->validated();
+
+        if(Group::Where('slug', $data['slug'])->where('id', '!=', $group->id)->exists())
+        {
+            return back()
+            ->withErrors(['slug' => 'Slug already exists'])
+            ->withInput();
+        }
         $group->update($data);
     
 
@@ -109,10 +117,15 @@ class GroupController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Group $group)
+    public function destroy(Request $request, Group $group)
     {
-        //
-    }
+        $request->validate([
+            'password' => ['required', 'current_password'],
+        
+        ]);
+        $group->delete();
+        return Redirect::to('/');
+    }  
 
     public function joinGroup(Group $group)
     {   

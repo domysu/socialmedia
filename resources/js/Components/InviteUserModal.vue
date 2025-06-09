@@ -45,11 +45,7 @@ function submit() {
     }
 
   });
- 
-
-
    
-    closeModal();
 }
 </script>
 <template>
@@ -81,7 +77,7 @@ function submit() {
                                 Input username or email of user you want to invite
                                 </p>
                                 <TextInput v-model="form.identifier"></TextInput>
-                                <p v-if="formErrors.groupName" class="text-red-500 text-sm">{{ formErrors.groupName }}</p>
+                                <p v-if="form.errors.identifier" class="text-red-500 text-sm">{{ form.errors.identifier }}</p>
                             </div>
 
                             <div class="mt-4 flex justify-between">

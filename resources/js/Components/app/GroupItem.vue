@@ -14,7 +14,7 @@ const props = defineProps({
         <img @error="props.group.thumbnail_path = '/img/default_avatar.png'":src="props.group.thumbnail_path || '/img/default_avatar.png'" class="w-[48px] rounded" />
         <div>
             <h3 class="mb-2 text-xl font-black">{{ props.group.name }}</h3>
-            <div class="text-xs text-gray-500">{{ props.group.name }}</div>
+            <div class="text-xs text-gray-500" v-html="props.group.about"></div>
         </div>
     </div>
 </a>

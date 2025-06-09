@@ -31,7 +31,6 @@ const coverImageSrc = ref();
 const avatarImageSrc = ref();
 const showNotification = ref(true);
 const groupUsers = ref([]);
-const isInGroupEdit = ref(false);
 const isInInviteModal = ref(false);
 
 const isEditing = computed(() => {
@@ -67,6 +66,11 @@ function leaveGroup() {
 
 function toProfile(user) {
     router.get(route('profile', user))
+}
+
+function toGroupEdit()
+{
+    router.get(route('group.edit', props.group))
 }
 function fetchUsers() {
 
@@ -192,23 +196,14 @@ function onAvatarChange(event) {
                                     class="absolute right-0 bottom-0 left-0 top-0 opacity-0 cursor-pointer" type="file">
                             </div>
                         </div>
-                        <div v-if="!isInGroupEdit">
+                        <div>
                             <h3 class="mb-2 text-xl font-black">{{ props.group.name }}</h3>
                             <div class="text-xs text-gray-500">
-                                <p>{{ props.group.about }}</p>
+                                <p v-html="props.group.about"></p>
 
                             </div>
                         </div>
-                        <div v-if="isInGroupEdit">
-                            <input class="mb-1 font-black border-none" type="text"
-                                :placeholder="props.group.name" v-model="groupEditForm.name">
-                              
-                            <div>
-
-                                <input class="text-gray-500 border-none" type="text" :placeholder="props.group.about" v-model="groupEditForm.about">
-                            </div>
-
-                        </div>
+                    
                         <div class="absolute right-2 top-2 ">
                             <Menu as="div" class="relative  inline-block text-left" v-if="!isInGroupEdit && authUser.id == modId">
                                 <div class="items-center flex gap-3">
@@ -232,7 +227,7 @@ function onAvatarChange(event) {
                                             <button :class="[
                                                 active ? 'bg-violet-500 text-white' : 'text-gray-900',
                                                 'group flex w-full items-center rounded-md px-2 py-2 text-sm',
-                                            ]" @click="isInGroupEdit = !isInGroupEdit">
+                                            ]" @click="toGroupEdit">
                                                 Edit
                                             </button>
                                             </MenuItem>
@@ -240,12 +235,7 @@ function onAvatarChange(event) {
                                     </MenuItems>
                                 </transition>
                             </Menu>
-                            <div v-if="isInGroupEdit">
-                                <button @click="saveGroupEdit" class="bg-emerald-500 hover:bg-emerald-400 p-2 mr-2 rounded-sm text-white">Update</button>
-                                <button class="p-2 bg-red-500 rounded-sm text-white hover:bg-red-600 hover:font-medium"
-                                    @click="isInGroupEdit = !isInGroupEdit"> Cancel </button>
-                                
-                            </div>
+                           
                         </div>
                     </div>
                     <div class="flex p-2 gap-2 justify-between">

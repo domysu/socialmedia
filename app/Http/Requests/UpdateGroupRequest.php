@@ -28,7 +28,8 @@ class UpdateGroupRequest extends FormRequest
     {
         return [
             'name' => ['required', 'max:14'],
-            'about' => ['required'],
+            'slug' => ['required', 'max:14'],
+            'about' => ['nullable', 'max:32'],
         ];
     }
 }

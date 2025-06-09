@@ -53,7 +53,10 @@ Route::get('/u/{user:username}', [ProfileController::class, 'index'])->name('pro
     Route::post('/follow', [ProfileController::class, 'followUser'])->name('user.follow');
     Route::post('/groups/{group}/invite', [GroupController::class, 'inviteUser'])->name('group.invite');
     Route::get('/groups', [GroupController::class, 'AllGroups'])->name('group.allGroups');
-    Route::put('/group/{group}', [GroupController::class, 'update'])->name('group.update');
+    Route::patch('/group/update/{group}', [GroupController::class, 'update'])->name('group.update');
+    Route::get('/group/edit/{group}', [GroupController::class, 'edit'])->name('group.edit');
+    Route::delete('/group/{group}', [GroupController::class, 'destroy'])->name('group.destroy');
+    
    
    
 });

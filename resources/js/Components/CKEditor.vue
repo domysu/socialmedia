@@ -3,7 +3,7 @@
     <ckeditor
       :editor="editor"
       @input="onEditorChange"
-      v-model="props.post.body"
+      v-model="props.output"
       :config="editorConfig"
     />
   </div>
@@ -28,9 +28,9 @@ const emit = defineEmits(["update:modelValue"]);
 
 const props = defineProps({
 
-    post: {
+    output: {
       type: Object,
-      default: () => ({ body: "" }),
+      default: () => " ",
     },
     
 })
